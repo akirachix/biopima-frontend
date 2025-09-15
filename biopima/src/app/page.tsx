@@ -1,10 +1,10 @@
 import Image from "next/image";
-
+import Sidebar from "./shared-components/sidebar/institution/page";
 export default function Home() {
   return (
     <div >
-      <h2>BioPima dashboard</h2>
-      
+       <Sidebar/>
     </div>
+   
   );
 }
