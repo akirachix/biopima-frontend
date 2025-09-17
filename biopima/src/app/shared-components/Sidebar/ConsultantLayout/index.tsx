@@ -4,14 +4,11 @@ export default function ConsultantLayout({
 }: {
   children: React.ReactNode
 }) {
-   return (
-        
-      
+   return (   
    <div className="flex-shrink-0 w-[350px]">
           <Sidebar />
         <main>{children}</main>
     </div>
-        
     
     )
     }
