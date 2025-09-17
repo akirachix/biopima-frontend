@@ -6,9 +6,8 @@ export default function ConsultantLayout({
 }) {
    return (   
    <div className="flex-shrink-0 w-[350px]">
-          <Sidebar />
+        <Sidebar />
         <main>{children}</main>
     </div>
-    
     )
     }
