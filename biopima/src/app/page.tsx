@@ -1,10 +1,9 @@
-import Image from "next/image";
+import ForgetPasswordPage from "./forgot-password/page";
 
 export default function Home() {
   return (
-    <div >
-      <h2>BioPima dashboard</h2>
-      
+    <div>
+      <ForgetPasswordPage/>
     </div>
   );
 }
