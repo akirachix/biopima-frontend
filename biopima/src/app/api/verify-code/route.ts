@@ -24,7 +24,6 @@ export async function POST(request: Request) {
         { status: response.status }
       );
     }
-
     return new Response(
       JSON.stringify({ success: true, message: "OTP verified" }),
       { status: 200 }
