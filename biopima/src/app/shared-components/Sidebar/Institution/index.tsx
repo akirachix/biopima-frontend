@@ -9,7 +9,6 @@ import {
 } from 'react-icons/md';
 import Image from 'next/image';
 
-
 export default function Sidebar() {
   const pathname = usePathname();
   
