@@ -22,7 +22,7 @@ export async function signupUser(
     });
 
     if (!response.ok) {
-      throw new Error("Login failed: " + response.statusText);
+      throw new Error("Signup failed: " + response.statusText);
     }
 
     return await response.json();
