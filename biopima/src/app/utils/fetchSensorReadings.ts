@@ -1,10 +1,8 @@
-const baseUrl = process.env.BASE_URL || 'https://biopima-cfbfed4a262a.herokuapp.com';
-console.log({baseUrl});
+const baseUrl = "/api/readings/"
 export async function fetchSensor() {
    try {
-       const response= await fetch(`${baseUrl}/api/sensor-readings`);
-       console.log({response});
-      
+       const response= await fetch(`${baseUrl}`);
+       
        if (!response.ok) {
            throw new Error("Something went wrong" + response.statusText);
    }

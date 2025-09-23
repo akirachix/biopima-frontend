@@ -1,5 +1,14 @@
 'use client';
-import React, { useLayoutEffect, useRef } from 'react';
+import React from 'react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface ChartSectionProps {
   pressureData: Array<{
@@ -11,162 +20,105 @@ interface ChartSectionProps {
 }
 
 export default function ChartSection({ pressureData, currentPressure }: ChartSectionProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useLayoutEffect(() => {
-    if (pressureData.length === 0) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationFrameId: number;
-
-    const resizeCanvas = () => {
-      const container = canvas.parentElement;
-      if (!container) return;
-
-    
-      const rawWidth = container.clientWidth;
-      const width = rawWidth > 0 ? rawWidth : 600;
-      const height = 300;
-
-     
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-
-      
-      const scale = window.devicePixelRatio || 1;
-      canvas.width = Math.floor(width * scale);
-      canvas.height = Math.floor(height * scale);
-      ctx.scale(scale, scale);
-
-   
-      drawChart(ctx, width, height);
-    };
-
-    const drawChart = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
-      const margin = 50;
-      const chartWidth = width - 2 * margin;
-      const chartHeight = height - 2 * margin;
-
-      const pressures = pressureData.map(d => d.pressure);
-      const maxPressure = Math.max(...pressures, 10);
-
-      ctx.clearRect(0, 0, width, height);
-
-    
-      ctx.strokeStyle = '#e0e0e0';
-      ctx.lineWidth = 1;
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#6b7280';
-      ctx.font = '10px Arial';
-
-      const steps = 5;
-      for (let i = 0; i <= steps; i++) {
-        const value = (i * maxPressure) / steps;
-        const y = height - margin - (i / steps) * chartHeight;
-        ctx.beginPath();
-        ctx.moveTo(margin, y);
-        ctx.lineTo(width - margin, y);
-        ctx.stroke();
-        ctx.fillText(value.toFixed(1), margin - 10, y + 4);
-      }
-
-      ctx.textAlign = 'center';
-      const xStep = Math.max(1, Math.ceil(pressureData.length / 6));
-      for (let i = 0; i < pressureData.length; i += xStep) {
-        const x = margin + (i / (pressureData.length - 1)) * chartWidth;
-        ctx.fillText(pressureData[i].time, x, height - margin + 20);
-      }
-
-    
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(margin, margin);
-      ctx.lineTo(margin, height - margin);
-      ctx.lineTo(width - margin, height - margin);
-      ctx.stroke();
-
-   
-      ctx.fillStyle = '#000';
-      ctx.font = '12px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('Time', width / 2, height - 10);
-
-    
-      ctx.strokeStyle = '#006400';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-
-      pressureData.forEach((point, i) => {
-        const x = margin + (i / (pressureData.length - 1)) * chartWidth;
-        const y = height - margin - (point.pressure / maxPressure) * chartHeight;
-
-        if (i === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      });
-
-      ctx.stroke();
-    };
-    const redraw = () => {
-      resizeCanvas();
-      animationFrameId = requestAnimationFrame(redraw);
-    };
-
- 
-    redraw();
-
-
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-    };
-  }, [pressureData]);
+  const tickFormatter = (time: string, index: number) => {
+    if (pressureData.length <= 6) return time; 
+    const step = Math.ceil(pressureData.length / 5);
+    return index % step === 0 ? time : '';
+  };
 
   return (
-    <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-lg border border-green-300">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3">
+    <div className="bg-white rounded-3xl p-6 shadow-lg border border-green-100">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
         <div>
-          <h3 className="text-xl font-semibold text-green-900">Gas Pressure Chart</h3>
+          <h3 className="text-2xl font-bold text-green-800">Gas Production</h3>
           {pressureData.length > 0 && (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-green-600 mt-1">
               Last updated: {new Date(pressureData[pressureData.length - 1].timestamp).toLocaleString()}
             </p>
           )}
         </div>
         {currentPressure && (
-          <div className="flex items-center space-x-2 text-sm bg-green-50 px-3 py-1 rounded-full">
-            <span className="w-3 h-3 rounded-full bg-green-500"></span>
-            <span className="font-medium">Current: {currentPressure}</span>
+          <div className="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-full border border-green-200">
+            <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+            <span className="font-medium text-green-800">Live: {currentPressure}</span>
           </div>
         )}
       </div>
 
-      <div className="relative w-full h-80 min-w-0">
+      <div className="w-full h-96">
         {pressureData.length > 0 ? (
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full cursor-crosshair"
-            style={{ maxWidth: '100%', height: '300px' }}
-          />
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={pressureData}
+              margin={{ top: 20, right: 40, left: 20, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="4 4" stroke="#f1f5f9" />
+              <XAxis
+                dataKey="time"
+                fontSize={12}
+                tickLine={false}
+                axisLine={{ stroke: '#cbd5e1' }}
+                tick={{ fill: '#64748b', fontWeight: 500 }}
+                tickFormatter={tickFormatter}
+                interval={0}
+                height={50}
+              />
+              <YAxis
+                fontSize={12}
+                tickLine={false}
+                axisLine={{ stroke: '#cbd5e1' }}
+                tick={{ fill: '#64748b', fontWeight: 500 }}
+                width={60}
+                label={{
+                  value: 'Gas (kPa)',
+                  angle: -90,
+                  position: 'insideLeft',
+                  fill: '#475569',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  dx: 10,
+                }}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  padding: '12px',
+                }}
+                itemStyle={{ color: '#1e293b', fontSize: '14px' }}
+                labelStyle={{ fontWeight: 600, color: '#059669' }}
+                labelFormatter={(label) => `Time: ${label}`}
+                formatter={(value: number) => [`${value.toFixed(1)} kPa`, 'Gas Production']}
+                cursor={{ stroke: '#059669', strokeWidth: 1, strokeDasharray: '5 5' }}
+              />
+
+              <Line
+                type="monotone"
+                dataKey="pressure"
+                stroke="#059669"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{
+                  r: 6,
+                  stroke: '#059669',
+                  strokeWidth: 3,
+                  fill: 'white',
+                  strokeOpacity: 1,
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <p>No pressure data available</p>
+          <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+            <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <p className="text-lg font-medium">No gas production data available</p>
           </div>
         )}
-      </div>
-
-      <div className="mt-4 text-xs text-gray-500 text-center">
-        <p>Showing last {pressureData.length} readings. Hover over line to see details.</p>
       </div>
     </div>
   );
-} 
+}

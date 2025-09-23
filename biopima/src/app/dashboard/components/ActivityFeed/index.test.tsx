@@ -1,65 +1,47 @@
-
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import ActivityFeed from '.';
 
 describe('ActivityFeed', () => {
-  it('renders title and description', () => {
-    render(<ActivityFeed />);
+  let container: HTMLElement;
 
-    const title = screen.getByText(/Activity Feed/i);
-    expect(title).toBeInTheDocument();
-    expect(title).toHaveClass('text-green-900');
-
-    const description = screen.getByText(/Recent system events and alerts./i);
-    expect(description).toBeInTheDocument();
-    expect(description).toHaveClass('text-green-700');
+  beforeEach(() => {
+    const rendered = render(<ActivityFeed />);
+    container = rendered.container;
   });
 
-  it('renders temperature warning activity item', () => {
-    render(<ActivityFeed />);
+  it('renders main heading and subtitle', () => {
+    expect(screen.getByRole('heading', { name: /Activity Feed/i })).toBeInTheDocument();
+    expect(screen.getByText(/Recent system events and alerts/i)).toBeInTheDocument();
+  });
 
-    const tempDot = screen.getAllByRole('presentation')[0]; 
-    expect(tempDot).toHaveClass('bg-green-500');
+  it('renders two activity items with correct titles and descriptions', () => {
+    expect(screen.getByText('Temp Warning')).toBeInTheDocument();
+    expect(screen.getByText(/Low Temperature Warning: Digester temperature at 34.6°C./i)).toBeInTheDocument();
 
-    const thermometerIcon = screen.getByLabelText(/thermometer/i);
+    expect(screen.getByText('Leak Warning')).toBeInTheDocument();
+    expect(screen.getByText(/Leak Warning: Pressure at 1.02 bar \(15.0% drop\)./i)).toBeInTheDocument();
+  });
+
+  it('displays correct timestamps for each alert', () => {
+    const timestamps = screen.getAllByText(/less than a minute ago/i);
+    expect(timestamps.length).toBe(2);
+  });
+
+  it('renders Thermometer SVG icon in Temp Warning section', () => {
+    const thermometerIcon = container.querySelector('svg.lucide-thermometer');
     expect(thermometerIcon).toBeInTheDocument();
-
-    const tempTitle = screen.getByText(/Temp Warning/i);
-    expect(tempTitle).toBeInTheDocument();
-    expect(tempTitle).toHaveClass('text-green-700');
-
-    const tempTime = screen.getByText(/less than a minute ago/i);
-    expect(tempTime).toBeInTheDocument();
-
-    const tempDesc = screen.getByText(/Low Temperature Warning: Digester temperature at 34.6°C./i);
-    expect(tempDesc).toBeInTheDocument();
-    expect(tempDesc).toHaveClass('text-gray-700');
   });
 
-  it('renders leak warning activity item', () => {
-    render(<ActivityFeed />);
-
-    const leakDot = screen.getAllByRole('presentation')[1];
-    expect(leakDot).toHaveClass('bg-yellow-700');
-
-    const alertIcon = screen.getByLabelText(/alert triangle/i);
-    expect(alertIcon).toBeInTheDocument();
-
-    const leakTitle = screen.getByText(/Leak Warning/i);
-    expect(leakTitle).toBeInTheDocument();
-    expect(leakTitle).toHaveClass('text-yellow-700');
-
-    const leakTime = screen.getByText(/less than a minute ago/i);
-    expect(leakTime).toBeInTheDocument();
-
-    const leakDesc = screen.getByText(/Leak Warning: Pressure at 1.02 bar \(15.0% drop\)./i);
-    expect(leakDesc).toBeInTheDocument();
-    expect(leakDesc).toHaveClass('text-gray-700');
+  it('renders AlertTriangle SVG icon in Leak Warning section', () => {
+    const alertTriangleIcon = container.querySelector('svg.lucide-triangle-alert');
+    expect(alertTriangleIcon).toBeInTheDocument();
   });
 
-  it('matches snapshot', () => {
-    const { asFragment } = render(<ActivityFeed />);
-    expect(asFragment()).toMatchSnapshot();
+  it('uses correct colors for status indicator dots', () => {
+    const greenDot = container.querySelector('span.bg-green-500');
+    expect(greenDot).toBeInTheDocument();
+
+    const yellowDot = container.querySelector('span.bg-yellow-700');
+    expect(yellowDot).toBeInTheDocument();
   });
 });

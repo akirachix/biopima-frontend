@@ -1,15 +1,6 @@
 import { fetchSensor } from "../utils/fetchSensorReadings";
 import { useEffect, useState } from "react";
-export interface SensorReading {
-    sensor_readings_id: number;
-    device_id: string;
-    temperature_level: string;
-    methane_level: string;
-    pressure_level: string;
-    gas_consumption: string;
-    created_at: string;
-    updated_at: string;
-}
+import { SensorReading } from "../utils/types/sensor";
 
 const useFetchSensorReadings = () =>{
     const [sensorReadings, setSensorReadings] = useState<Array<SensorReading>>([]);
