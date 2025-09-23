@@ -9,19 +9,18 @@ import {
 } from 'react-icons/md';
 import Image from 'next/image';
 
-
 export default function Sidebar() {
   const pathname = usePathname();
   
   const items = [
-    { path: '/institution/dashboard', tag: 'Dashboard', Icon: MdDashboard },
+    { path: '/', tag: 'Dashboard', Icon: MdDashboard },
     { path: '/institution/reports', tag: 'Reports', Icon: MdDescription },
     { path: '/institution/alerts', tag: 'Alerts', Icon: MdWarningAmber },
     { path: '/institution/settings', tag: 'Settings', Icon: MdSettings },
   ];
 
   return (
-    <div className="flex flex-col h-screen w-56 bg-[#054511] text-white pl-6 shadow-lg rounded-r-1xl font-poppins relative">
+    <div className="flex flex-col h-screen w-56 bg-[#054511] text-white pl-6 shadow-lg rounded-r-1xl font-poppins relative min-h-screen">
       <div className="flex items-center gap-2 pl-4 mb-10 mt-4 h-20 ml-[-15px]">
         <Image
           src="/Group 156.png"
