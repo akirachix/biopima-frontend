@@ -18,6 +18,7 @@ export interface SensorReadingType {
   updated_at: string;
 }
 
+// utils/types.ts
 export interface UserType {
   id: number;
   username: string;
@@ -26,7 +27,12 @@ export interface UserType {
   email: string;
   phone_number: string;
   user_type: string;
-  password: string
+  password: string;
+}
+
+// ✅ New type for dashboard clients
+export interface ClientWithStatus extends UserType {
+  status: string;
 }
 
 export type NewUserType = Omit<UserType, "id" | "image"> ;
