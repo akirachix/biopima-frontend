@@ -1,19 +1,24 @@
+
 "use client";
 
+import { use } from 'react';
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FiEye, FiEyeOff } from 'react-icons/fi';
-import { useLogin } from "../hooks/useFetchLogin";
+import { useLogin } from '../hooks/useFetchLogin';
 
-export default function SignInForm() {
+export default function SignInForm({
+  searchParams,
+}: {
+  searchParams: Promise<{ role?: string }>;
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const role = searchParams.get("role");
+  const params = use(searchParams);
+  const role = params.role;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const { handleLogin, loading, error } = useLogin();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,9 +66,7 @@ export default function SignInForm() {
         </button>
       </div>
 
-      {error && (
-        <p className="text-red-600 text-sm font-medium mt-1">{error}</p>
-      )}
+      {error && <p className="text-red-600 text-sm font-medium mt-1">{error}</p>}
 
       <div className="text-right">
         <button
