@@ -11,26 +11,28 @@ export default function Pagination({
   if (totalPages <= 1) return null;
 
   const secondaryColor = "var(--text-secondary)";
- 
+
   const getPageNumbers = () => {
     const pages = [];
-    const maxPages = 2; 
 
+    // Always include current page
     pages.push(currentPage);
 
+    // Include next page if not on last page
     if (currentPage < totalPages) {
       pages.push(currentPage + 1);
     }
-     
+
+    // If on last page and there are at least 2 pages, include previous
     if (currentPage === totalPages && totalPages > 1) {
       pages.unshift(currentPage - 1);
     }
+
     return pages;
   };
 
   return (
     <div className="flex items-center justify-center gap-2 mt-6">
-      
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
@@ -44,7 +46,7 @@ export default function Pagination({
       >
         <ChevronLeft size={30} strokeWidth={3.5} />
       </button>
-         
+
       {getPageNumbers().map((page) => (
         <button
           key={page}

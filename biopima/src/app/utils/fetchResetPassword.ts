@@ -11,7 +11,7 @@ async function resetPasswordApi({ email, password, confirm_password, otp }: { em
   let data;
   try {
     data = JSON.parse(text);
-  } catch (error) {
+  } catch  {
     throw new Error("Invalid JSON: " + text);
   }
 
