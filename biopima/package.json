@@ -7,8 +7,7 @@
     "build": "next build --turbopack",
     "test": "jest",
     "start": "next start",
-    "lint": "eslint",
-    "test": "jest"
+    "lint": "eslint"
   },
   "dependencies": {
     "jest-canvas-mock": "^2.5.2",
@@ -22,10 +21,10 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
-
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -36,6 +35,5 @@
     "tailwindcss": "^4",
     "ts-jest": "^29.4.4",
     "typescript": "^5.9.2"
-
   }
 }
