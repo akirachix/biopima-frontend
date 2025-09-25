@@ -1,4 +1,3 @@
-
 "use client";
 import { Bell, User } from "lucide-react";
 import { useState, ChangeEvent, FormEvent } from "react";
@@ -10,7 +9,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AddUser() {
  
-  const { AddUser, error, successMessage, resetMessages } = useFetchUsers();
+  const { addUser, error, successMessage, resetMessages } = useFetchUsers();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -36,14 +35,15 @@ export default function AddUser() {
       }
       return;
     }
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({ name: '', email: '', phone_number: '', username: '' }); 
 
-    let newErrors = {
+ 
+    const newErrors = {
       name: '',
       email: '',
       phone_number: '',
@@ -88,15 +88,16 @@ export default function AddUser() {
     };
     
     try {
-      await AddUser(bodyData); 
+  
+      await addUser(bodyData); 
       setFormData({
         name: '',
         email: '',
         phone_number: '',
         username: '',
       });
-    } catch (err) {
-    
+    } catch  {
+  
     }
   };
 

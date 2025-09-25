@@ -9,6 +9,7 @@ export default function SignupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const role = searchParams.get("role")?.toLowerCase();
+  void role;
   const { handleSignup, loading } = useSignup();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
