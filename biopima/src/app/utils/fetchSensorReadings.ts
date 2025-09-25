@@ -1,7 +1,8 @@
-const baseUrl = "/api/readings/"
+const baseUrl = "/api/sensor-readings/"
+
 export async function fetchSensor() {
    try {
-       const response= await fetch(`${baseUrl}`);
+       const response= await fetch(baseUrl);
        
        if (!response.ok) {
            throw new Error("Something went wrong" + response.statusText);

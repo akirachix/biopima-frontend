@@ -21,4 +21,4 @@ const useFetchSensorReadings = () =>{
     return {sensorReadings, loading, error}
 };
 
-export default useFetchSensorReadings 
+export default useFetchSensorReadings; 

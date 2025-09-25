@@ -8,3 +8,8 @@ export interface SensorReading {
     created_at: string;
     updated_at: string;
 }
+export interface PaginationScreen{
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
