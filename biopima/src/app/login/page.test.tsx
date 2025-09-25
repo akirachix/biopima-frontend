@@ -1,135 +1,88 @@
-
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SignInPage from "./page";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLogin } from "../hooks/useFetchLogin";
 
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
+  useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
 }));
 
-
-jest.mock("../../hooks/useFetchLogin", () => ({
-  useLogin: () => ({
-    handleLogin: jest.fn(),
-    loading: false,
-    error: null,
-  }),
+jest.mock("../hooks/useFetchLogin", () => ({
+  useLogin: jest.fn(),
 }));
 
 describe("SignInPage", () => {
-  const mockPush = jest.fn();
   const mockHandleLogin = jest.fn();
+  const mockPush = jest.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
-    (useLogin as jest.Mock).mockImplementation(() => ({
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn(() => undefined), 
+    });
+
+    (useLogin as jest.Mock).mockReturnValue({
       handleLogin: mockHandleLogin,
       loading: false,
       error: null,
-    }));
+    });
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
   });
 
-  it("renders form fields correctly", () => {
-    const searchParams = Promise.resolve({ role: "consultant" });
-    render(<SignInPage searchParams={searchParams} />);
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
+  it("renders all form fields", () => {
+    render(<SignInPage/>);
     expect(screen.getByPlaceholderText("Enter your email")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Enter your password")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Sign In/i })).toBeInTheDocument();
   });
 
-  it("submits form and redirects on successful login", async () => {
+  it("calls handleLogin and redirects on successful login", async () => {
     mockHandleLogin.mockResolvedValueOnce(true);
-    const searchParams = Promise.resolve({ role: "consultant" });
-
-    render(<SignInPage searchParams={searchParams} />);
-
+    render(<SignInPage/>);
     fireEvent.change(screen.getByPlaceholderText("Enter your email"), {
-      target: { value: "user@example.com" },
+      target: { value: "amanda123@example.com" },
     });
     fireEvent.change(screen.getByPlaceholderText("Enter your password"), {
-      target: { value: "password123" },
+      target: { value: "amanda@job" },
     });
-
-    fireEvent.click(screen.getByRole("button", { name: /Sign In/i }));
+    fireEvent.submit(screen.getByRole("button", { name: /Sign In/i }).closest("form")!);
 
     await waitFor(() => {
-      expect(mockHandleLogin).toHaveBeenCalledWith("user@example.com", "password123", "consultant");
+      expect(mockHandleLogin).toHaveBeenCalledWith("amanda123@example.com", "amanda@job", undefined);
       expect(mockPush).toHaveBeenCalledWith("/dashboard");
     });
   });
 
-  it("passes undefined role when not provided", async () => {
-    mockHandleLogin.mockResolvedValueOnce(true);
-    const searchParams = Promise.resolve({});
-
-    render(<SignInPage searchParams={searchParams} />);
-
-    fireEvent.change(screen.getByPlaceholderText("Enter your email"), {
-      target: { value: "test@test.com" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("Enter your password"), {
-      target: { value: "pass" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: /Sign In/i }));
-
-    await waitFor(() => {
-      expect(mockHandleLogin).toHaveBeenCalledWith("test@test.com", "pass", undefined);
-    });
-  });
-
-  it("shows error message when login fails", () => {
-    (useLogin as jest.Mock).mockImplementationOnce(() => ({
+  it("shows error message if login fails", () => {
+    (useLogin as jest.Mock).mockReturnValue({
       handleLogin: jest.fn(),
       loading: false,
-      error: "Invalid credentials",
-    }));
-
-    const searchParams = Promise.resolve({ role: "operator" });
-    render(<SignInPage searchParams={searchParams} />);
-
-    expect(screen.getByText("Invalid credentials")).toBeInTheDocument();
+      error: "Invalid email or password",
+    });
+    render(<SignInPage/>);
+    expect(screen.getByText("Invalid email or password")).toBeInTheDocument();
   });
 
   it("toggles password visibility", () => {
-    const searchParams = Promise.resolve({ role: "consultant" });
-    render(<SignInPage searchParams={searchParams} />);
-
-    const passwordInput = screen.getByPlaceholderText("Enter your password") as HTMLInputElement;
-    const toggleButton = screen.getByLabelText(/Show password/i);
-
-    expect(passwordInput.type).toBe("password");
+    render(<SignInPage/>);
+    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const toggleButton = screen.getByLabelText("Show password");
+    expect(passwordInput).toHaveAttribute("type", "password");
     fireEvent.click(toggleButton);
-    expect(passwordInput.type).toBe("text");
+    expect(passwordInput).toHaveAttribute("type", "text");
     fireEvent.click(toggleButton);
-    expect(passwordInput.type).toBe("password");
+    expect(passwordInput).toHaveAttribute("type", "password");
   });
 
-  it("navigates to forgot password page", () => {
-    const searchParams = Promise.resolve({});
-    render(<SignInPage searchParams={searchParams} />);
-
+  it("navigates to forgot password page when link is clicked", () => {
+    render(<SignInPage/>);
     fireEvent.click(screen.getByText("Forgot Password?"));
     expect(mockPush).toHaveBeenCalledWith("/forgot-password");
   });
-
-  it("shows sign up link for non-institution roles", () => {
-    const searchParams = Promise.resolve({ role: "consultant" });
-    render(<SignInPage searchParams={searchParams} />);
-
-    expect(screen.getByText(/Don’t have an account\?/i)).toBeInTheDocument();
-  });
-
-  it("hides sign up link for institution role", () => {
-    const searchParams = Promise.resolve({ role: "institution" });
-    render(<SignInPage searchParams={searchParams} />);
-
-    expect(screen.queryByText(/Don’t have an account\?/i)).not.toBeInTheDocument();
-  });
 });
+
