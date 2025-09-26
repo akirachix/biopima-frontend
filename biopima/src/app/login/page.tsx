@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useLogin } from "../hooks/useFetchLogin";
 
 export default function SignInPage() {
@@ -19,7 +19,13 @@ export default function SignInPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await handleLogin(email, password, role ?? undefined);
-    if (result) router.push("/dashboard");
+
+    if (result) {
+      localStorage.setItem("userId", result.user_id.toString());
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("email", result.email);
+      router.push("/settings"); 
+    }
   };
 
   return (
@@ -33,7 +39,6 @@ export default function SignInPage() {
       />
 
       <div className="flex bg-white rounded-xl shadow-lg overflow-hidden w-[1600px] h-[800px]">
-
         <div className="relative w-220 flex items-center justify-center">
           <Image
             src="/images/side-shape.png"
@@ -43,16 +48,21 @@ export default function SignInPage() {
             priority
           />
           <div className="absolute text-center text-white px-8">
-            <h1 className="text-6xl md:text-6xl font-extrabold text-[#054511] leading-tight mb-15">Sign In</h1>
-            <p className="text-5xl md:text-7xl font-extrabold tracking-wide">BioPima</p>
+            <h1 className="text-6xl md:text-6xl font-extrabold text-[#054511] leading-tight mb-15">
+              Sign In
+            </h1>
+            <p className="text-5xl md:text-7xl font-extrabold tracking-wide">
+              BioPima
+            </p>
           </div>
         </div>
 
         <div className="w-1/2 p-20 pt-50 bg-white">
           <form onSubmit={handleSubmit} className="space-y-7">
-
             <div>
-              <label className="block text-green-900 text-[20px] font-semibold mb-1">Company Email</label>
+              <label className="block text-green-900 text-[20px] font-semibold mb-1">
+                Company Email
+              </label>
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -64,7 +74,9 @@ export default function SignInPage() {
             </div>
 
             <div className="relative">
-              <label className="block text-green-900 text-[20px] font-semibold mb-1">Password</label>
+              <label className="block text-green-900 text-[20px] font-semibold mb-1">
+                Password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
@@ -120,12 +132,8 @@ export default function SignInPage() {
               </button>
             </p>
           )}
-
         </div>
       </div>
     </div>
   );
 }
-
-
-

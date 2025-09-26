@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import Sidebar from "../shared-components/Sidebar/Institution";
 import { UserSettings } from "../utils/types/profile";
-import { useUserSettings } from "../hooks/useFetchSettings";
+import { useUserSettings } from "../hooks/useFetchProfile";
 import { fetchUser } from "../utils/fetchProfile";
 
 function Profile() {

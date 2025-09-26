@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { UserSettings } from "../utils/types/profile";
 import { updateUser } from "../utils/fetchProfile";
+import { UserSettings } from "../utils/types/profile";
 
 export function useUserSettings() {
   const [updating, setUpdating] = useState(false);

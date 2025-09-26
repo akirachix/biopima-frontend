@@ -1,14 +1,9 @@
+
 import React from "react";
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import Profile from "./page";
 import * as fetchProfileModule from "../utils/fetchProfile";
-import { useUserSettings } from "../hooks/useFetchSettings";
+import { useUserSettings } from "../hooks/useFetchProfile";
 import { useRouter } from "next/navigation";
 
 jest.mock("../hooks/useFetchProfile", () => ({
@@ -69,10 +64,7 @@ describe("Profile Component", () => {
       expect(screen.getByDisplayValue("Johnson")).toBeInTheDocument();
       expect(screen.getByDisplayValue("alice@example.com")).toBeInTheDocument();
       expect(screen.getByDisplayValue("5551234567")).toBeInTheDocument();
-      expect(screen.getByAltText("Profile")).toHaveAttribute(
-        "src",
-        mockUserData.image
-      );
+      expect(screen.getByAltText("Profile")).toHaveAttribute("src", mockUserData.image);
     });
   });
 
@@ -82,18 +74,10 @@ describe("Profile Component", () => {
     });
     await waitFor(() => screen.getByDisplayValue("Alice"));
 
-    fireEvent.change(screen.getByLabelText(/first name/i), {
-      target: { value: "Alicia" },
-    });
-    fireEvent.change(screen.getByLabelText(/last name/i), {
-      target: { value: "Smith" },
-    });
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: "alicia@example.com" },
-    });
-    fireEvent.change(screen.getByLabelText(/phone number/i), {
-      target: { value: "5557654321" },
-    });
+    fireEvent.change(screen.getByLabelText(/first name/i), { target: { value: "Alicia" } });
+    fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: "Smith" } });
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "alicia@example.com" } });
+    fireEvent.change(screen.getByLabelText(/phone number/i), { target: { value: "5557654321" } });
 
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: /update/i }));
@@ -112,9 +96,7 @@ describe("Profile Component", () => {
         null,
         "securetoken"
       );
-      expect(
-        screen.getByText(/profile updated successfully/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/profile updated successfully/i)).toBeInTheDocument();
     });
   });
 
@@ -141,9 +123,7 @@ describe("Profile Component", () => {
     });
     await waitFor(() => screen.getByDisplayValue("Alice"));
 
-    const fileInput = document.querySelector(
-      'input[type="file"]'
-    ) as HTMLInputElement;
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
 
     const invalidFile = new File(["data"], "error.txt", { type: "text/plain" });
     const validFile = new File(["image"], "photo.png", { type: "image/png" });
@@ -151,17 +131,13 @@ describe("Profile Component", () => {
     await act(async () => {
       fireEvent.change(fileInput, { target: { files: [invalidFile] } });
     });
-    expect(
-      await screen.findByText(/please select a valid image file/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/please select a valid image file/i)).toBeInTheDocument();
 
     await act(async () => {
       fireEvent.change(fileInput, { target: { files: [validFile] } });
     });
     await waitFor(() => {
-      expect(
-        screen.queryByText(/please select a valid image file/i)
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(/please select a valid image file/i)).not.toBeInTheDocument();
     });
   });
 

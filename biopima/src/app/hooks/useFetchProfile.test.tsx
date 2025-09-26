@@ -1,8 +1,8 @@
 import { renderHook, act } from "@testing-library/react";
-import { useUserSettings } from "./useFetchSettings";
+import { useUserSettings } from "./useFetchProfile";
 import { updateUser } from "../utils/fetchProfile";
 
-jest.mock("../utils/fetchSettings");
+jest.mock("../utils/fetchProfile");
 
 describe("useUserSettings", () => {
   const mockUpdateUser = updateUser as jest.MockedFunction<typeof updateUser>;
