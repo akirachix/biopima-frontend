@@ -73,7 +73,7 @@ export default function SignupForm({
       await handleSignup(form);
       router.push("/dashboard");
     } catch {
-   
+      
     }
   };
 
