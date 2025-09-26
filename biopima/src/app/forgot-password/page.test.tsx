@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent} from '@testing-library/react';
 import ForgetPasswordPage from './page';
 import useForgotPassword from '../hooks/useForgotPassword';
 import { useRouter } from 'next/navigation';

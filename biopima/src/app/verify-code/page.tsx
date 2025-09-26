@@ -21,6 +21,7 @@ function VerifyCodePage() {
 
   const { verify, loading, error, success } = useVerifyCode();
 
+ 
   useEffect(() => {
     if (timer <= 0 || success) return;
     const interval = setInterval(() => {
@@ -29,13 +30,15 @@ function VerifyCodePage() {
     return () => clearInterval(interval);
   }, [timer, success]);
 
+  
   useEffect(() => {
     const emailFromStorage = localStorage.getItem("email");
     if (emailFromStorage) {
       setEmail(emailFromStorage);
     }
-  });
+  }, []); 
 
+ 
   useEffect(() => {
     if (success && !isRedirecting.current) {
       isRedirecting.current = true;
@@ -51,7 +54,7 @@ function VerifyCodePage() {
   ) => {
     const value = e.target.value;
     if (value.length <= 1) {
-      const newCode = code.slice();
+      const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
 
@@ -74,12 +77,13 @@ function VerifyCodePage() {
     e.preventDefault();
     const otp = code.join("");
     if (otp.length !== CODE_LENGTH) {
-      return alert("Please enter the full code.");
+      alert("Please enter the full code.");
+      return;
     }
     if (timer <= 0) {
-      return alert("Time has expired. Please request a new code.");
+      alert("Time has expired. Please request a new code.");
+      return;
     }
-
     if (loading) return;
 
     try {

@@ -26,7 +26,12 @@ export interface UserType {
   email: string;
   phone_number: string;
   user_type: string;
-  password: string
+  password: string;
+}
+
+
+export interface ClientWithStatus extends UserType {
+  status: string;
 }
 
 export type NewUserType = Omit<UserType, "id" | "image"> ;

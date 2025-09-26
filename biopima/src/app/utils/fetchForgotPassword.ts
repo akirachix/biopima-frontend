@@ -12,7 +12,7 @@ async function forgotPasswordApi(email: string) {
   let data;
   try {
     data = JSON.parse(text);
-  } catch (error) {
+  } catch {
     throw new Error("Invalid JSON response from server: " + text);
   }
 

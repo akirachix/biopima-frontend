@@ -1,26 +1,28 @@
-"use client";
 
 import { useState } from "react";
 import { verifyCodeApi } from "../utils/fetchVerifyCode";
 
-export function useVerifyCode() {
+export const useVerifyCode = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   const verify = async (email: string, code: string) => {
-    setError("");
     setLoading(true);
+    setError("");
+    setSuccess(false);
+
     try {
-      const res = await verifyCodeApi(email, code);
+     
+      await verifyCodeApi(email, code);
       setSuccess(true);
-    } catch (error) {
-      setError((error as Error).message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Verification failed";
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   return { verify, loading, error, success };
-}
-
+};
