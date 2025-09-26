@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { FiEdit, FiUser, FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 
@@ -197,34 +198,34 @@ function Profile() {
         )}
 
         <div className="mb-8 flex flex-col items-center gap-6">
-          <div className="relative flex-shrink-0">
-            <div className="w-32 h-32 rounded-full border-4 mt-[80px] border-[#157015] overflow-hidden bg-white flex items-center justify-center text-gray-300">
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <FiUser size={48} />
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={selectFile}
-              className="absolute bottom-0 right-0 bg-green-700 text-white p-2 rounded-full shadow-md hover:bg-green-600 transition cursor-pointer"
-            >
-              <FiEdit size={18} />
-            </button>
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={handleImageChange}
-            />
+          <div className="relative w-32 h-32 rounded-full border-4 mt-[80px] border-[#157015] overflow-hidden bg-white flex items-center justify-center text-gray-300">
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt="Profile"
+                layout="fill"
+                objectFit="cover"
+                className="w-full h-full"
+                priority={true}
+              />
+            ) : (
+              <FiUser size={48} />
+            )}
           </div>
-
+          <button
+            type="button"
+            onClick={selectFile}
+            className="absolute bottom-0 right-0 bg-green-700 text-white p-2 rounded-full shadow-md hover:bg-green-600 transition cursor-pointer"
+          >
+            <FiEdit size={18} />
+          </button>
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleImageChange}
+          />
           <div className="flex-1 ml-1 mt-[10px]">
             <p className="text-[30px] font-semibold text-green-900">{`${form.fullName.toUpperCase()} ${form.lastName.toUpperCase()}`}</p>
           </div>

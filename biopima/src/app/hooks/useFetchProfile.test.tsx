@@ -4,13 +4,23 @@ import { updateUser } from "../utils/fetchProfile";
 
 jest.mock("../utils/fetchProfile");
 
+interface UserSettings {
+  fullName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
 describe("useUserSettings", () => {
   const mockUpdateUser = updateUser as jest.MockedFunction<typeof updateUser>;
-  const mockSettings = { theme: "dark" } as any;
+  const mockSettings: UserSettings = {
+    fullName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phone: "1234567890",
+  };
   const mockBaseUrl = "https://api.example.com";
   const mockUserId = "user123";
-  const mockToken = "token456";
-  const mockImageFile = new File(["test"], "test.jpg", { type: "image/jpeg" });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,7 +36,7 @@ describe("useUserSettings", () => {
 
   describe("fetch behavior", () => {
     it("should set updating to true during fetch operation", async () => {
-      let resolveUpdate: any;
+      let resolveUpdate: () => void;
       const updatePromise = new Promise<void>((resolve) => {
         resolveUpdate = resolve;
       });

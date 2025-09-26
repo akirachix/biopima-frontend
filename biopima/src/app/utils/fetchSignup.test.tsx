@@ -44,7 +44,7 @@ describe('signupUser', () => {
 
   test('handles API error response', async () => {
     const errorMessage = 'Email already exists';
-    
+
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
       status: 400,
@@ -57,12 +57,12 @@ describe('signupUser', () => {
       'john@acme.com',
       '1234567890',
       'password123'
-    )).rejects.toThrow(`Failed to fetch: Login failed: ${errorMessage}`);
+    )).rejects.toThrow(`Failed to fetch: Signup failed: ${errorMessage}`); 
   });
 
   test('handles network error', async () => {
     const errorMessage = 'Network connection failed';
-    
+
     (fetch as jest.Mock).mockRejectedValueOnce(new Error(errorMessage));
 
     await expect(signupUser(

@@ -11,7 +11,7 @@ async function fetchUser(baseUrl: string, userId: string, token: string) {
   let data;
   try {
     data = JSON.parse(text);
-  } catch (error) {
+  } catch {
     throw new Error("Invalid JSON response from server: " + text);
   }
   if (!response.ok) {
@@ -46,7 +46,7 @@ async function updateUser(
   let data;
   try {
     data = JSON.parse(text);
-  } catch (error) {
+  } catch {
     throw new Error("Invalid JSON response from server: " + text);
   }
   if (!response.ok) {
