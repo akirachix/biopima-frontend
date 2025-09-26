@@ -5,9 +5,9 @@ export default function ConsultantLayout({
   children: React.ReactNode
 }) {
    return (   
-   <div className="flex-shrink-0 w-[350px]">
+   <div className="flex-shrink-0 w-[350px] flex items-center w-full" >
         <Sidebar />
-        <main>{children}</main>
+        <main className="w-full">{children}</main>
     </div>
     )
     }
