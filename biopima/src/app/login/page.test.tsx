@@ -1,9 +1,11 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import SignInPage from './page';
-import { useLogin } from '../hooks/useFetchLogin';
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import SignInPage from "./login";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useLogin } from "../hooks/useFetchLogin";
 
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),
 }));

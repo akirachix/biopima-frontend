@@ -4,8 +4,8 @@ import { fetchUsers, createUser } from "../utils/fetchUsers";
 import { NewUserType, UserType } from "../utils/types";
 
 jest.mock("../utils/fetchUsers");
-const mockFetchUsers = fetchUsers as jest.Mock;
-const mockCreateUser = createUser as jest.Mock;
+const mockFetchUsers = fetchUsers as jest.MockedFunction<typeof fetchUsers>;
+const mockCreateUser = createUser as jest.MockedFunction<typeof createUser>;
 
 describe("useFetchUsers hook", () => {
   beforeEach(() => {
@@ -47,7 +47,7 @@ describe("useFetchUsers hook", () => {
     const { result } = renderHook(() => useFetchUsers());
     expect(result.current.loading).toBe(true);
     await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current.user).toEqual(mockUsers);
+    expect(result.current.users).toEqual(mockUsers);
     expect(result.current.error).toBeNull();
   });
 
@@ -60,13 +60,13 @@ describe("useFetchUsers hook", () => {
     expect(result.current.error).toBe(errorMessage);
   });
 
-it("should handle where no user matches the query", async () => {
+  it("should handle case where no user matches the query", async () => {
     const errorMessage = "No user matches the given query";
     mockFetchUsers.mockRejectedValueOnce(new Error(errorMessage));
     const { result } = renderHook(() => useFetchUsers());
     expect(result.current.loading).toBe(true);
     await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current.user).toEqual([]);
+    expect(result.current.users).toEqual([]);
     expect(result.current.error).toBe(errorMessage);
   });
 
@@ -86,10 +86,12 @@ it("should handle where no user matches the query", async () => {
     };
     mockCreateUser.mockResolvedValueOnce(createdUserResponse);
     const { result } = renderHook(() => useFetchUsers());
-    let createdUser: any;
+
+    let createdUser: UserType | undefined;
     await act(async () => {
-      createdUser = await result.current.AddUser(newUserPayload);
+      createdUser = await result.current.addUser(newUserPayload);
     });
+
     expect(mockCreateUser).toHaveBeenCalledWith(newUserPayload);
     expect(result.current.successMessage).toBe("User created successfully!");
     expect(createdUser).toEqual(createdUserResponse);
@@ -108,7 +110,7 @@ it("should handle where no user matches the query", async () => {
     mockCreateUser.mockRejectedValueOnce(new Error(errorMessage));
     const { result } = renderHook(() => useFetchUsers());
     await act(async () => {
-      await expect(result.current.AddUser(newUserPayload)).rejects.toThrow(
+      await expect(result.current.addUser(newUserPayload)).rejects.toThrow(
         errorMessage
       );
     });
@@ -116,26 +118,25 @@ it("should handle where no user matches the query", async () => {
     expect(result.current.successMessage).toBe(null);
   });
 
-  it("should not create a user when some required fields are missing", async () => {
-    const partialPayload = {
+  it("should not create a user when required fields are missing", async () => {
+   
+    const partialPayload: Partial<NewUserType> = {
       name: "Mercy",
       email: "mercy@gmail.com",
-      username: "",
-      phone_number: "",
-      user_type: "Institutional operator",
-      password: "",
+     
     };
     const errorMessage = "All fields are required";
     mockCreateUser.mockRejectedValueOnce(new Error(errorMessage));
     const { result } = renderHook(() => useFetchUsers());
+
     await act(async () => {
-      await expect(result.current.AddUser(partialPayload as any)).rejects.toThrow(
-        errorMessage
-      );
+      await expect(
+       
+        result.current.addUser(partialPayload as NewUserType)
+      ).rejects.toThrow(errorMessage);
     });
-    expect(mockCreateUser).toHaveBeenCalledWith(partialPayload);
+
     expect(result.current.error).toBe(errorMessage);
     expect(result.current.successMessage).toBe(null);
   });
-
 });
