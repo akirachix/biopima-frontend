@@ -12,13 +12,13 @@ export function useLogin() {
     try {
       const result = await loginUser(email, password);
 
-      if (expectedRole && result.user.role !== expectedRole) {
+      if (expectedRole && result.role && result.role !== expectedRole) {
         setError("This account does not have access to this role.");
         return null;
       }
-      
-      return result;
 
+      return result;
+      
     } catch (error) {
       setError((error as Error).message);
       return null;
@@ -29,5 +29,6 @@ export function useLogin() {
 
   return { handleLogin, loading, error };
 }
+
 
 
