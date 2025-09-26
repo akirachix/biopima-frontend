@@ -18,7 +18,6 @@ export interface SensorReadingType {
   updated_at: string;
 }
 
-// utils/types.ts
 export interface UserType {
   id: number;
   username: string;
@@ -30,7 +29,7 @@ export interface UserType {
   password: string;
 }
 
-// ✅ New type for dashboard clients
+
 export interface ClientWithStatus extends UserType {
   status: string;
 }

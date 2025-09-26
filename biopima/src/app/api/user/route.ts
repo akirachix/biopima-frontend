@@ -4,7 +4,7 @@ const baseUrl = process.env.BASE_URL;
 
 export async function GET() {
   try {
-    const response = await fetch(`${baseUrl}/user/`);
+    const response = await fetch(`${baseUrl}/api/user/`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch users');
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const response = await fetch(`${baseUrl}/user/`, {
+    const response = await fetch(`${baseUrl}/api/user/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ const baseUrl = process.env.BASE_URL;
 export async function GET() {
   try {
 
-    const response = await fetch(`${baseUrl}/mcus/`);
+    const response = await fetch(`${baseUrl}/api/mcus/`);
     const result = await response.json();
     
     return new Response(JSON.stringify(result), {
