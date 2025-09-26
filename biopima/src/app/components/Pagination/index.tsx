@@ -15,15 +15,15 @@ export default function Pagination({
   const getPageNumbers = () => {
     const pages = [];
 
-    // Always include current page
+    
     pages.push(currentPage);
 
-    // Include next page if not on last page
+   
     if (currentPage < totalPages) {
       pages.push(currentPage + 1);
     }
 
-    // If on last page and there are at least 2 pages, include previous
+   
     if (currentPage === totalPages && totalPages > 1) {
       pages.unshift(currentPage - 1);
     }
