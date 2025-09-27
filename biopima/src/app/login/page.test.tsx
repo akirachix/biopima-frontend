@@ -4,25 +4,20 @@ import "@testing-library/jest-dom";
 import SignInPage from "./login";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLogin } from "../hooks/useFetchLogin";
-
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),
 }));
-
 jest.mock("../hooks/useFetchLogin", () => ({
   useLogin: jest.fn(),
 }));
-
 describe("SignInPage", () => {
   const mockHandleLogin = jest.fn();
   const mockPush = jest.fn();
-
   beforeEach(() => {
     (useSearchParams as jest.Mock).mockReturnValue({
-      get: jest.fn(() => undefined), 
+      get: jest.fn(() => undefined),
     });
-
     (useLogin as jest.Mock).mockReturnValue({
       handleLogin: mockHandleLogin,
       loading: false,
@@ -30,17 +25,14 @@ describe("SignInPage", () => {
     });
     (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
   });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
-
   it("renders all form fields", () => {
     render(<SignInPage/>);
     expect(screen.getByPlaceholderText("Enter your email")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Enter your password")).toBeInTheDocument();
   });
-
   it("calls handleLogin and redirects on successful login", async () => {
     mockHandleLogin.mockResolvedValueOnce(true);
     render(<SignInPage/>);
@@ -51,13 +43,11 @@ describe("SignInPage", () => {
       target: { value: "amanda@job" },
     });
     fireEvent.submit(screen.getByRole("button", { name: /Sign In/i }).closest("form")!);
-
     await waitFor(() => {
       expect(mockHandleLogin).toHaveBeenCalledWith("amanda123@example.com", "amanda@job", undefined);
       expect(mockPush).toHaveBeenCalledWith("/dashboard");
     });
   });
-
   it("shows error message if login fails", () => {
     (useLogin as jest.Mock).mockReturnValue({
       handleLogin: jest.fn(),
@@ -67,7 +57,6 @@ describe("SignInPage", () => {
     render(<SignInPage/>);
     expect(screen.getByText("Invalid email or password")).toBeInTheDocument();
   });
-
   it("toggles password visibility", () => {
     render(<SignInPage/>);
     const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -78,11 +67,9 @@ describe("SignInPage", () => {
     fireEvent.click(toggleButton);
     expect(passwordInput).toHaveAttribute("type", "password");
   });
-
   it("navigates to forgot password page when link is clicked", () => {
     render(<SignInPage/>);
     fireEvent.click(screen.getByText("Forgot Password?"));
     expect(mockPush).toHaveBeenCalledWith("/forgot-password");
   });
 });
-
