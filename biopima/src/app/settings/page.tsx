@@ -199,6 +199,3 @@ export default function AddUser() {
     </ConsultantLayout>
   );
 }
-
-
-
