@@ -1,4 +1,4 @@
-// hooks/useFetchUsers.ts
+
 import { useEffect, useState } from "react";
 import { fetchUsers, createUser } from "../utils/fetchUsers";
 import { UserType, NewUserType } from "../utils/types";
