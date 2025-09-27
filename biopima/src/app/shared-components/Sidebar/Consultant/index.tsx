@@ -7,7 +7,7 @@ import Image from 'next/image';
 export default function Sidebar() {
   const pathname = usePathname();
   const items = [
-    { path: '/consultant/dashboard', tag: 'Dashboard', Icon: MdDashboard },
+    { path: '/DashboardPage', tag: 'Dashboard', Icon: MdDashboard },
     { path: '/consultant/settings', tag: 'Settings', Icon: MdSettings },
   ];
   return (

@@ -1,26 +1,30 @@
-
-"use client";
+'use client';
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { useLogin } from "../hooks/useFetchLogin";
+
 
 export default function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const role = searchParams.get("role");
 
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+
   const { handleLogin, loading, error } = useLogin();
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await handleLogin(email, password, role ?? undefined);
     if (result) router.push("/dashboard");
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-7">
@@ -37,6 +41,7 @@ export default function SignInForm() {
           required
         />
       </div>
+
 
       <div className="relative">
         <label className="block text-green-900 text-[20px] font-semibold mb-1">
@@ -61,9 +66,11 @@ export default function SignInForm() {
         </button>
       </div>
 
+
       {error && (
         <p className="text-red-600 text-sm font-medium mt-1">{error}</p>
       )}
+
 
       <div className="text-right">
         <button
@@ -75,6 +82,7 @@ export default function SignInForm() {
         </button>
       </div>
 
+
       <button
         type="submit"
         disabled={loading}
@@ -84,6 +92,7 @@ export default function SignInForm() {
       >
         {loading ? "Signing in..." : "Sign In"}
       </button>
+
 
       {role?.toLowerCase() !== "institution" && (
         <p className="text-center text-1xl text-green-800 mt-8">
@@ -99,3 +108,8 @@ export default function SignInForm() {
     </form>
   );
 }
+
+
+
+
+
