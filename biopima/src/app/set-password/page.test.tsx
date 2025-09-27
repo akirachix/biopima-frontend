@@ -9,7 +9,6 @@ jest.mock('next/navigation', () => ({
 }));
 
 jest.mock('../hooks/useFetchSetPassword');
-
 describe('SetPasswordPage', () => {
   const pushMock = jest.fn();
 

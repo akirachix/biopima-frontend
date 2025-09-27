@@ -3,7 +3,6 @@ import useSetPassword from "./useFetchSetPassword";
 import * as fetchUtils from "../utils/fetchSetPassword";
 
 jest.mock("../utils/fetchSetPassword");
-
 describe("useSetPassword", () => {
   beforeEach(() => {
     jest.clearAllMocks();

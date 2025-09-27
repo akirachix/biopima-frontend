@@ -6,6 +6,7 @@ const useSetPassword = () => {
  const [loading, setLoading] = useState<boolean>(false);
  const [error, setError] = useState<string | null>(null);
  const SetPassword = async (email:string,password:string) => {
+  
    setLoading(true);
    setError(null);
    try {
