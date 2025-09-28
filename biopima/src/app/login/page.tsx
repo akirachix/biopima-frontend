@@ -1,4 +1,4 @@
-
+'use client';
 import { Suspense } from 'react';
 import Image from 'next/image';
 import SignInForm from './login';
@@ -27,7 +27,9 @@ export default function SignInPage() {
             <h1 className="text-6xl md:text-6xl font-extrabold text-[#054511] leading-tight mb-15">
               Sign In
             </h1>
-            <p className="text-5xl md:text-7xl font-extrabold tracking-wide">BioPima</p>
+            <p className="text-5xl md:text-7xl font-extrabold tracking-wide">
+              BioPima
+            </p>
           </div>
         </div>
 
@@ -40,3 +42,10 @@ export default function SignInPage() {
     </div>
   );
 }
+
+
+
+
+
+
+

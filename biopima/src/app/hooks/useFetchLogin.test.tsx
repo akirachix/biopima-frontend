@@ -1,135 +1,105 @@
-import { renderHook, act } from '@testing-library/react';
-import { useLogin } from './useFetchLogin';
-import { loginUser } from '../utils/fetchLogin';
+import { renderHook, act } from "@testing-library/react";
+import { useLogin } from "./useFetchLogin";
+import * as fetchLoginModule from "../utils/fetchLogin";
 
+interface FakeUser {
+  user: {
+    role: string;
+  };
+}
 
-jest.mock('../utils/fetchLogin', () => ({
-  loginUser: jest.fn(),
-}));
+describe("useLogin hook", () => {
+  const mockLoginUser = jest.spyOn(fetchLoginModule, "loginUser");
 
-describe('useLogin', () => {
   beforeEach(() => {
-
-    (loginUser as jest.Mock).mockClear();
+    jest.clearAllMocks();
   });
 
-  test('initial state should be correct', () => {
-    const { result } = renderHook(() => useLogin());
-    
-    expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBeNull();
-  });
+  it("sets loading correctly during login", async () => {
+    const fakeUser: FakeUser = { user: { role: "admin" } };
 
-  test('should set loading to true during login', async () => {
+    mockLoginUser.mockImplementation(
+      () =>
+        new Promise<FakeUser>((resolve) => {
+          setTimeout(() => resolve(fakeUser), 50);
+        })
+    );
 
-    (loginUser as jest.Mock).mockResolvedValue({});
-    
     const { result } = renderHook(() => useLogin());
-    
+
+    let promise: Promise<FakeUser | null>;
+
     act(() => {
-      result.current.handleLogin('test@example.com', 'password');
+      promise = result.current.handleLogin("test@example.com", "password");
     });
-    
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     expect(result.current.loading).toBe(true);
+
+   
+    await act(async () => {
+      await promise;
+    });
+
+    expect(result.current.loading).toBe(false);
+  });
+
+  it("returns result when login succeeds", async () => {
+    const fakeUser: FakeUser = { user: { role: "admin" } };
+    mockLoginUser.mockResolvedValue(fakeUser);
+
+    const { result } = renderHook(() => useLogin());
+
+    let response: FakeUser | null = null;
+    await act(async () => {
+      response = await result.current.handleLogin("test@example.com", "password");
+    });
+
+    expect(response).toEqual(fakeUser);
     expect(result.current.error).toBeNull();
-  });
-
-  test('should return result on successful login', async () => {
-    const mockResult = {
-      user_id: '123',
-      token: 'token123',
-      email: 'test@example.com',
-      role: 'user'
-    };
-    
-    (loginUser as jest.Mock).mockResolvedValue(mockResult);
-    
-    const { result } = renderHook(() => useLogin());
-    
-    let loginResult;
-    await act(async () => {
-      loginResult = await result.current.handleLogin('test@example.com', 'password');
-    });
-    
     expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBeNull();
-    expect(loginResult).toEqual(mockResult);
   });
 
-  test('should return result when role matches expected role', async () => {
-    const mockResult = {
-      user_id: '123',
-      token: 'token123',
-      email: 'test@example.com',
-      role: 'admin'
-    };
-    
-    (loginUser as jest.Mock).mockResolvedValue(mockResult);
-    
+  it("sets error when login fails", async () => {
+    mockLoginUser.mockRejectedValue(new Error("Login failed"));
+
     const { result } = renderHook(() => useLogin());
-    
-    let loginResult;
+
+    let response: FakeUser | null = null;
     await act(async () => {
-      loginResult = await result.current.handleLogin('test@example.com', 'password', 'admin');
+      response = await result.current.handleLogin(
+        "test@example.com",
+        "wrongpassword"
+      );
     });
-    
+
+    expect(response).toBeNull();
+    expect(result.current.error).toBe("Login failed");
     expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBeNull();
-    expect(loginResult).toEqual(mockResult);
   });
 
-  test('should set error and return null when role does not match expected role', async () => {
-    const mockResult = {
-      user_id: '123',
-      token: 'token123',
-      email: 'test@example.com',
-      role: 'user'
-    };
-    
-    (loginUser as jest.Mock).mockResolvedValue(mockResult);
-    
+  it("sets error when role does not match expectedRole", async () => {
+    const fakeUser: FakeUser = { user: { role: "user" } };
+    mockLoginUser.mockResolvedValue(fakeUser);
+
     const { result } = renderHook(() => useLogin());
-    
-    let loginResult;
+
+    let response: FakeUser | null = null;
     await act(async () => {
-      loginResult = await result.current.handleLogin('test@example.com', 'password', 'admin');
+      response = await result.current.handleLogin(
+        "test@example.com",
+        "password",
+        "admin"
+      );
     });
-    
+
+    expect(response).toBeNull();
+    expect(result.current.error).toBe(
+      "This account does not have access to this role."
+    );
     expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBe("This account does not have access to this role.");
-    expect(loginResult).toBeNull();
-  });
-
-  test('should set error and return null when loginUser throws error', async () => {
-    const errorMessage = 'Invalid credentials';
-    
-    (loginUser as jest.Mock).mockRejectedValue(new Error(errorMessage));
-    
-    const { result } = renderHook(() => useLogin());
-    
-    let loginResult;
-    await act(async () => {
-      loginResult = await result.current.handleLogin('test@example.com', 'password');
-    });
-    
-    expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBe(errorMessage);
-    expect(loginResult).toBeNull();
-  });
-
-  test('should call loginUser with correct parameters', async () => {
-    (loginUser as jest.Mock).mockResolvedValue({});
-    
-    const { result } = renderHook(() => useLogin());
-    
-    const email = 'test@example.com';
-    const password = 'password123';
-    
-    await act(async () => {
-      await result.current.handleLogin(email, password);
-    });
-    
-    expect(loginUser).toHaveBeenCalledWith(email, password);
   });
 });

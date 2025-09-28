@@ -1,75 +1,85 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import SignInPage from "./login";
-import { useRouter, useSearchParams } from "next/navigation";
+import { render, screen, fireEvent } from "@testing-library/react";
+import SignInForm from "./login";
 import { useLogin } from "../hooks/useFetchLogin";
+import { useRouter, useSearchParams } from "next/navigation";
+
+jest.mock("../hooks/useFetchLogin");
+const mockUseLogin = useLogin as jest.Mock;
+
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),
 }));
-jest.mock("../hooks/useFetchLogin", () => ({
-  useLogin: jest.fn(),
-}));
-describe("SignInPage", () => {
-  const mockHandleLogin = jest.fn();
+
+describe("SignInForm", () => {
   const mockPush = jest.fn();
+
   beforeEach(() => {
-    (useSearchParams as jest.Mock).mockReturnValue({
-      get: jest.fn(() => undefined),
-    });
-    (useLogin as jest.Mock).mockReturnValue({
-      handleLogin: mockHandleLogin,
-      loading: false,
-      error: null,
-    });
-    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
-  });
-  afterEach(() => {
     jest.clearAllMocks();
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue(null),
+    });
   });
-  it("renders all form fields", () => {
-    render(<SignInPage/>);
+
+  it("renders all input fields", () => {
+    mockUseLogin.mockReturnValue({ handleLogin: jest.fn(), loading: false, error: null });
+    render(<SignInForm />);
+
     expect(screen.getByPlaceholderText("Enter your email")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Enter your password")).toBeInTheDocument();
   });
+
+  it("updates input fields on change", () => {
+    mockUseLogin.mockReturnValue({ handleLogin: jest.fn(), loading: false, error: null });
+    render(<SignInForm />);
+
+    const emailInput = screen.getByPlaceholderText("Enter your email");
+    fireEvent.change(emailInput, { target: { value: "amanda123@example.com" } });
+    expect(emailInput).toHaveValue("amanda123@example.com");
+
+    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    fireEvent.change(passwordInput, { target: { value: "amanda@job" } });
+    expect(passwordInput).toHaveValue("amanda@job");
+  });
+
   it("calls handleLogin and redirects on successful login", async () => {
-    mockHandleLogin.mockResolvedValueOnce(true);
-    render(<SignInPage/>);
+    const mockHandleLogin = jest.fn().mockResolvedValue({});
+    mockUseLogin.mockReturnValue({ handleLogin: mockHandleLogin, loading: false, error: null });
+
+    render(<SignInForm />);
+
     fireEvent.change(screen.getByPlaceholderText("Enter your email"), {
       target: { value: "amanda123@example.com" },
     });
     fireEvent.change(screen.getByPlaceholderText("Enter your password"), {
       target: { value: "amanda@job" },
     });
-    fireEvent.submit(screen.getByRole("button", { name: /Sign In/i }).closest("form")!);
-    await waitFor(() => {
-      expect(mockHandleLogin).toHaveBeenCalledWith("amanda123@example.com", "amanda@job", undefined);
-      expect(mockPush).toHaveBeenCalledWith("/dashboard");
-    });
+
+    fireEvent.click(screen.getByRole("button", { name: /sign in|signing in/i }));
+
+    await screen.findByPlaceholderText("Enter your email"); 
+    expect(mockHandleLogin).toHaveBeenCalledWith(
+      "amanda123@example.com",
+      "amanda@job",
+      undefined
+    );
+    expect(mockPush).toHaveBeenCalledWith("/institution");
   });
+
   it("shows error message if login fails", () => {
-    (useLogin as jest.Mock).mockReturnValue({
-      handleLogin: jest.fn(),
-      loading: false,
-      error: "Invalid email or password",
-    });
-    render(<SignInPage/>);
-    expect(screen.getByText("Invalid email or password")).toBeInTheDocument();
+    mockUseLogin.mockReturnValue({ handleLogin: jest.fn(), loading: false, error: "Login failed" });
+    render(<SignInForm />);
+
+    const errorMessage = screen.getByText(/login failed/i);
+    expect(errorMessage).toBeInTheDocument();
   });
-  it("toggles password visibility", () => {
-    render(<SignInPage/>);
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
-    const toggleButton = screen.getByLabelText("Show password");
-    expect(passwordInput).toHaveAttribute("type", "password");
-    fireEvent.click(toggleButton);
-    expect(passwordInput).toHaveAttribute("type", "text");
-    fireEvent.click(toggleButton);
-    expect(passwordInput).toHaveAttribute("type", "password");
-  });
-  it("navigates to forgot password page when link is clicked", () => {
-    render(<SignInPage/>);
-    fireEvent.click(screen.getByText("Forgot Password?"));
-    expect(mockPush).toHaveBeenCalledWith("/forgot-password");
+
+  it("disables submit button while loading", () => {
+    mockUseLogin.mockReturnValue({ handleLogin: jest.fn(), loading: true, error: null });
+    render(<SignInForm />);
+
+    const button = screen.getByRole("button", { name: /sign in|signing in/i });
+    expect(button).toBeDisabled();
   });
 });

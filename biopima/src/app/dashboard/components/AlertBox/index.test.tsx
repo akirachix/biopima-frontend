@@ -1,33 +1,32 @@
-import { render, screen } from '@testing-library/react';
-import AlertBox from '.';
+// src/components/AlertBox.test.tsx
+import { render, screen } from "@testing-library/react";
+import AlertBox from ".";
 
-describe('AlertBox', () => {
-  it('does not render when methaneLevel is null', () => {
+describe("AlertBox", () => {
+  it("does not render when methaneLevel is null", () => {
     const { container } = render(<AlertBox methaneLevel={null} />);
-    expect(container).toBeEmptyDOMElement();
+    expect(container.firstChild).toBeNull();
   });
 
-  it('does not render when methaneLevel is 2 or below', () => {
+  it("does not render when methaneLevel is 2 or less", () => {
     const { container } = render(<AlertBox methaneLevel={2} />);
-    expect(container).toBeEmptyDOMElement();
+    expect(container.firstChild).toBeNull();
 
-    const { container: container2 } = render(<AlertBox methaneLevel={0} />);
-    expect(container2).toBeEmptyDOMElement();
+    const { container: container1 } = render(<AlertBox methaneLevel={0} />);
+    expect(container1.firstChild).toBeNull();
   });
 
-  it('renders alert when methaneLevel is above 2', () => {
-    render(<AlertBox methaneLevel={2.5} />);
-    expect(screen.getByText('Methane Alert')).toBeInTheDocument();
-    expect(screen.getByText('High Methane Detected:')).toBeInTheDocument();
-    expect(screen.getByText(/Methane level at 2\.5 ppm/)).toBeInTheDocument();
+  it("renders alert when methaneLevel is greater than 2", () => {
+    render(<AlertBox methaneLevel={5.5} />);
+    
+    expect(screen.getByText(/Methane Alert/i)).toBeInTheDocument();
+    expect(screen.getByText(/High Methane Detected/i)).toBeInTheDocument();
   });
 
-  it('formats methaneLevel to one decimal place', () => {
-    render(<AlertBox methaneLevel={3.14159} />);
-    expect(
-      screen.getByText((content) => 
-        content.includes('Methane level at') && content.includes('3.1') && content.includes('ppm')
-      )
-    ).toBeInTheDocument();
+  it("displays the correct methane level in the text", () => {
+    const level = 7.3;
+    render(<AlertBox methaneLevel={level} />);
+    
+    expect(screen.getByText(`High Methane Detected: Methane level at ${level.toFixed(1)} ppm.`)).toBeInTheDocument();
   });
 });

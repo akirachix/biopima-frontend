@@ -1,4 +1,3 @@
-
 "use client";
 
 import { use } from 'react';
@@ -71,7 +70,7 @@ export default function SignupForm({
     e.preventDefault();
     try {
       await handleSignup(form);
-      router.push("/dashboard");
+      router.push("/institution");
     } catch {
       
     }
@@ -242,3 +241,5 @@ export default function SignupForm({
     </div>
   );
 }
+
+
