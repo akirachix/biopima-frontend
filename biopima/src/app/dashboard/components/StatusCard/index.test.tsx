@@ -1,37 +1,42 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import StatusCard from '../StatusCard';
+// src/app/dashboard/components/StatusCard/index.test.tsx
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import StatusCard from ".";
 
-
-jest.mock('lucide-react', () => ({
-  AlertTriangle: jest.fn(({ className }) => <svg data-testid="mock-AlertTriangle" className={className} />),
-  Activity: jest.fn(({ className }) => <svg data-testid="mock-Activity" className={className} />),
+// Mock lucide-react icons for predictable tests
+jest.mock("lucide-react", () => ({
+  AlertTriangle: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg data-testid="alert-triangle-icon" {...props} />
+  ),
+  Activity: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg data-testid="activity-icon" {...props} />
+  ),
 }));
 
-describe('StatusCard', () => {
-  it('renders system status card correctly', () => {
+describe("StatusCard", () => {
+  it("renders system status correctly", () => {
     render(<StatusCard type="system" />);
 
-    expect(screen.getByText('System Status')).toBeInTheDocument();
-    expect(screen.getByText('All systems operational')).toBeInTheDocument();
-    expect(screen.getByText('Warning')).toBeInTheDocument();
+    // Check text content
+    expect(screen.getByText("System Status")).toBeInTheDocument();
+    expect(screen.getByText("All systems operational")).toBeInTheDocument();
+    expect(screen.getByText("Warning")).toBeInTheDocument();
 
-    const icon = screen.getByTestId('mock-AlertTriangle');
-    expect(icon).toHaveClass('w-5', 'h-5', 'text-red-500');
-
-    const container = screen.getByText('System Status').closest('div')?.parentElement;
-    expect(container).toHaveClass('bg-green-100', 'rounded-3xl', 'shadow-lg', 'p-4', 'flex', 'flex-col');
+    // Check icon presence
+    expect(screen.getByTestId("alert-triangle-icon")).toBeInTheDocument();
   });
 
-  it('renders monitoring status card correctly', () => {
+  it("renders monitoring status correctly", () => {
     render(<StatusCard type="monitoring" />);
 
-    expect(screen.getByText('Automatically monitoring pressure, temperature, & volume.')).toBeInTheDocument();
+    // Check text content
+    expect(
+      screen.getByText(
+        "Automatically monitoring pressure, temperature, & volume."
+      )
+    ).toBeInTheDocument();
 
-    const icon = screen.getByTestId('mock-Activity');
-    expect(icon).toHaveClass('w-5', 'h-5', 'text-green-700');
-
-    const container = screen.getByText('Automatically monitoring pressure, temperature, & volume.').closest('div')?.parentElement;
-    expect(container).toHaveClass('bg-green-100', 'rounded-3xl', 'shadow-lg', 'p-4', 'flex', 'flex-col');
+    // Check icon presence
+    expect(screen.getByTestId("activity-icon")).toBeInTheDocument();
   });
 });

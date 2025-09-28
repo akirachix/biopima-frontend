@@ -13,7 +13,7 @@ export async function GET() {
     const result = await response.json();
     return NextResponse.json(result, {
       status: 200,
-      statusText: 'User created successfully'
+      statusText: result.message
     });
   } catch (error) {
     console.error('GET request error:', error);
@@ -29,35 +29,44 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const bodyData = await request.json();
-    const {name, email, phone_number, username} = bodyData;
+    const { name, email, phone_number, username } = bodyData;
     if (!name || !email || !phone_number || !username) {
       return NextResponse.json(
         { message: 'Missing required fields' },
-        {
-          status: 400,
-        }
+        { status: 400 }
       );
     }
 
     const response = await fetch(`${baseUrl}/api/user/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bodyData),
     });
 
     const result = await response.json();
-    
+
+    if (response.status === 409 || (result.message && result.message.toLowerCase().includes("already"))) {
+      return NextResponse.json(
+        { message: 'User already exists' },
+        { status: 409 }
+      );
+    }
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { message: result.message || 'User already exists' },
+        { status: response.status }
+      );
+    }
 
     return new Response(JSON.stringify(result), {
       status: 201,
-      statusText: 'User created successfully',
+      statusText: result.message,
     });
-  } catch(error){
-        return new Response((error as Error).message, {
-            status:500,
-            statusText: 'Internal server error'
-        })
-    }
+  } catch (error) {
+    return new Response((error as Error).message, {
+      status: 500,
+      statusText: 'Internal server error',
+    });
+  }
 }

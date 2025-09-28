@@ -7,6 +7,7 @@ async function fetchUser(baseUrl: string, userId: string, token: string) {
       "Content-Type": "application/json",
     },
   });
+
   const text = await response.text();
   let data;
   try {
