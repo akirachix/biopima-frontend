@@ -5,3 +5,8 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+module.exports = {
+  images: {
+    domains: ['biopima-cfbfed4a262a.herokuapp.com'],
+  },
+};

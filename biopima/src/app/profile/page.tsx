@@ -144,7 +144,6 @@ function Profile() {
 
   return (
     <div className="flex min-h-screen relative">
-      <Sidebar />
       <button
         onClick={() => setShowLogoutModal(true)}
         className="absolute top-6 right-6 text-[#013A01] hover:text-red-800 p-2 rounded-full bg-white shadow-md z-50 cursor-pointer"
