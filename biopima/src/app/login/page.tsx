@@ -13,6 +13,7 @@ export default function SignInPage() {
         className="object-cover -z-10"
         priority
       />
+      
 
       <div className="flex bg-white rounded-xl shadow-lg overflow-hidden w-[1600px] h-[800px]">
         <div className="relative w-220 flex items-center justify-center">
