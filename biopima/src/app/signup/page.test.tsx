@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SignupForm from "./signup"; 
 import { useRouter } from "next/navigation";
@@ -22,8 +16,6 @@ jest.mock("../hooks/useFetchSignup", () => ({
 describe("SignupForm", () => {
   const mockHandleSignup = jest.fn();
   const mockPush = jest.fn();
-
-  
   const mockSearchParams = Promise.resolve({ role: "user" });
 
   beforeEach(() => {
@@ -46,7 +38,6 @@ describe("SignupForm", () => {
       render(<SignupForm searchParams={mockSearchParams} />);
     });
 
-  
     await screen.findByPlaceholderText("Name");
 
     const inputs = {
@@ -164,7 +155,7 @@ describe("SignupForm", () => {
         password: "amanda@job",
         confirmPassword: "amanda@job",
       });
-      expect(mockPush).toHaveBeenCalledWith("/dashboard");
+      expect(mockPush).toHaveBeenCalledWith("/institution"); 
     });
   });
 
