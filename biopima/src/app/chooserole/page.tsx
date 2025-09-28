@@ -38,16 +38,14 @@ export default function RolePage() {
       <div className="flex flex-row sm:flex-row gap-6">
         <button
           onClick={() => handleSelect("institution")}
-         
-          className="border-2 border-[#9EAF1B] bg-transparent text-[#9EAF1B] text-xl md:text-2xl font-bold py-3 px-8 rounded-2xl hover:bg-green-50 transition-all duration-200 shadow-md hover:shadow-lg min-w-[140px] cursor-pointer"
+          className="border-2 border-[#9EAF1B] bg-transparent text-[#9EAF1B] text-xl md:text-2xl font-bold py-3 px-8 rounded-2xl hover:bg-[#9EAF1B] hover:text-white transition-all duration-200 shadow-md hover:shadow-lg min-w-[140px] cursor-pointer"
         >
-           
           Institution
         </button>
 
         <button
           onClick={() => handleSelect("consultant")}
-          className="bg-[#9EAF1B] text-white text-xl md:text-2xl font-bold py-3 px-8 rounded-2xl hover:bg-[#8a9d18] transition-all duration-200 shadow-md hover:shadow-lg min-w-[140px] cursor-pointer"
+          className="border-2 border-[#9EAF1B] bg-transparent text-[#9EAF1B] text-xl md:text-2xl font-bold py-3 px-8 rounded-2xl hover:bg-[#9EAF1B] hover:text-white transition-all duration-200 shadow-md hover:shadow-lg min-w-[140px] cursor-pointer"
         >
           Consultant
         </button>
@@ -55,4 +53,3 @@ export default function RolePage() {
     </div>
   );
 }
-

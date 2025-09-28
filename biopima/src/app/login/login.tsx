@@ -1,8 +1,7 @@
-
-"use client";
+'use client';
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useLogin } from "../hooks/useFetchLogin";
 
 export default function SignInForm() {
@@ -19,7 +18,25 @@ export default function SignInForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await handleLogin(email, password, role ?? undefined);
-    if (result) router.push("/dashboard");
+
+    if (result) {
+      if (typeof window !== "undefined") {
+        const userId = String(result.user_id || result.id); 
+        console.log("DEBUG Login result:", result);
+        console.log("DEBUG Stored userId:", userId);
+
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("token", result.token);
+        localStorage.setItem("email", email);
+        localStorage.setItem("role", role || "");
+      }
+
+      if (role && role.toLowerCase() === "institution") {
+        router.push("/dashboard");
+      } else {
+        router.push("/institution");
+      }
+    }
   };
 
   return (
@@ -87,7 +104,7 @@ export default function SignInForm() {
 
       {role?.toLowerCase() !== "institution" && (
         <p className="text-center text-1xl text-green-800 mt-8">
-          Don’t have an account?{" "}
+           Don&apos;t have an account?{" "}
           <button
             onClick={() => router.push("/signup")}
             className="text-green-900 font-bold hover:underline cursor-pointer"

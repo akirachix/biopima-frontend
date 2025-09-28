@@ -1,7 +1,5 @@
-
-
-'use client';
-import Sidebar from "../Institution"; 
+import React from 'react';
+import Sidebar from "../Institution";
 
 export default function InstitutionLayout({
   children,
@@ -9,12 +7,12 @@ export default function InstitutionLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-gray-50">
-    
-      <aside className="flex-shrink-0 w-[350px] bg-white shadow-sm">
+    <div className="flex h-screen bg-gray-50">
+      <aside className="fixed top-0 left-0 bottom-0 w-56 bg-white shadow-lg z-10 overflow-hidden">
         <Sidebar />
       </aside>
-      <main className="flex-1 overflow-auto bg-gray-50">
+      
+      <main className="ml-56 flex-1 overflow-auto">
         {children}
       </main>
     </div>
