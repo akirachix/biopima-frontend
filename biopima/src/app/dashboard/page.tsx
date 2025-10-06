@@ -1,4 +1,6 @@
 'use client';
+
+
 import React from 'react';
 import useLiveSensorReadings from '../hooks/useFetchSensorReadings';
 import MetricCard from './components/MetricCard';
