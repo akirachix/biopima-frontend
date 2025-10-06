@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const response = await fetch(`${baseUrl}/verify-code/`, {
+    const response = await fetch(`${baseUrl}/api/verify-code/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),

@@ -9,6 +9,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 jest.mock('../hooks/useFetchSetPassword');
+
 describe('SetPasswordPage', () => {
   const pushMock = jest.fn();
 
@@ -31,7 +32,7 @@ describe('SetPasswordPage', () => {
     expect(screen.getByPlaceholderText(/Email Address/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/New Password/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Confirm Password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: /Set Password/i})).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Set Password/i })).toBeInTheDocument();
   });
 
   test('password validation error if less than 8 chars', async () => {
@@ -81,7 +82,7 @@ describe('SetPasswordPage', () => {
     expect(screen.getByText(/Password Set Successful!/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /Go to Login/i }));
-    expect(pushMock).toHaveBeenCalledWith('/login');
+    expect(pushMock).toHaveBeenCalledWith('/login?role=institution'); 
   });
 
   test('show and hide password toggles input type', async () => {
