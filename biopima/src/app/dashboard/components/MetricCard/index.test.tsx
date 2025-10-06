@@ -1,108 +1,127 @@
-// src/app/dashboard/components/MetricCard/index.test.tsx
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import MetricCard from ".";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import MetricCard from '.';
 
-// Mock icons so we can check them via data-testid
-jest.mock("lucide-react", () => ({
-  Activity: (props: React.SVGProps<SVGSVGElement>) => (
-    <svg data-testid="activity-icon" {...props} />
-  ),
-  Thermometer: (props: React.SVGProps<SVGSVGElement>) => (
-    <svg data-testid="thermometer-icon" {...props} />
-  ),
-  Gauge: (props: React.SVGProps<SVGSVGElement>) => (
-    <svg data-testid="gauge-icon" {...props} />
-  ),
+
+
+
+
+
+jest.mock('lucide-react', () => ({
+ Activity: () => <div data-testid="icon-activity" />,
+ Thermometer: () => <div data-testid="icon-thermometer" />,
+ Gauge: () => <div data-testid="icon-gauge" />,
+ AlertTriangle: () => <div data-testid="icon-alerttriangle" />,
+ AlertCircle: () => <div data-testid="icon-alertcircle" />,
 }));
 
-describe("MetricCard", () => {
-  it("renders methane metric correctly", () => {
-    render(
-      <MetricCard
-        title="Methane Level"
-        value="3.2"
-        unit="ppm"
-        description="Normal methane level"
-        variant="methane"
-      />
-    );
 
-    expect(screen.getByText("Methane Level")).toBeInTheDocument();
-    expect(screen.getByText("3.2")).toBeInTheDocument();
-    expect(screen.getByText("ppm")).toBeInTheDocument();
-    expect(screen.getByText("Normal methane level")).toBeInTheDocument();
-    expect(screen.getByTestId("activity-icon")).toBeInTheDocument();
-  });
+describe('MetricCard', () => {
+ it('renders methane card with normal status', () => {
+   render(
+     <MetricCard
+       title="Methane"
+       value="1.23"
+       unit="ppm"
+       description="Normal methane levels"
+       variant="methane"
+       status="normal"
+     />
+   );
 
-  it("renders temperature metric correctly", () => {
-    render(
-      <MetricCard
-        title="Temperature"
-        value="34.5"
-        unit="°C"
-        description="Current digester temperature"
-        variant="temperature"
-      />
-    );
 
-    expect(screen.getByText("Temperature")).toBeInTheDocument();
-    expect(screen.getByText("34.5")).toBeInTheDocument();
-    expect(screen.getByText("°C")).toBeInTheDocument();
-    expect(screen.getByText("Current digester temperature")).toBeInTheDocument();
-    expect(screen.getByTestId("thermometer-icon")).toBeInTheDocument();
-  });
+   expect(screen.getByText('Methane')).toBeInTheDocument();
+   expect(screen.getByText('1.23')).toBeInTheDocument();
+   expect(screen.getByText('ppm')).toBeInTheDocument();
+   expect(screen.getByText('Normal methane levels')).toBeInTheDocument();
 
-  it("renders pressure metric correctly", () => {
-    render(
-      <MetricCard
-        title="Pressure"
-        value="1.02"
-        unit="bar"
-        description="Current system pressure"
-        variant="pressure"
-      />
-    );
 
-    expect(screen.getByText("Pressure")).toBeInTheDocument();
-    expect(screen.getByText("1.02")).toBeInTheDocument();
-    expect(screen.getByText("bar")).toBeInTheDocument();
-    expect(screen.getByText("Current system pressure")).toBeInTheDocument();
-    expect(screen.getByTestId("gauge-icon")).toBeInTheDocument();
-  });
+   expect(screen.queryByTestId('icon-alerttriangle')).toBeNull();
+   expect(screen.queryByTestId('icon-alertcircle')).toBeNull();
+   expect(screen.getByTestId('icon-activity')).toBeInTheDocument();
+ });
 
-  it("applies correct styles for each variant", () => {
-    const { container: methaneCard } = render(
-      <MetricCard
-        title="Methane"
-        value="3.0"
-        unit="ppm"
-        description="Desc"
-        variant="methane"
-      />
-    );
-    expect(methaneCard.firstChild).toHaveClass("border-green-200");
 
-    const { container: tempCard } = render(
-      <MetricCard
-        title="Temp"
-        value="30"
-        unit="°C"
-        description="Desc"
-        variant="temperature"
-      />
-    );
-    expect(tempCard.firstChild).toHaveClass("border-pink-200");
+ it('renders temperature card with warning status and alert icon', () => {
+   render(
+     <MetricCard
+       title="Temperature"
+       value="38.5"
+       unit="°C"
+       description="High temperature warning"
+       variant="temperature"
+       status="warning"
+     />
+   );
 
-    const { container: pressureCard } = render(
-      <MetricCard
-        title="Pressure"
-        value="1.0"
-        unit="bar"
-        description="Desc"
-        variant="pressure"
-      />
-    );
-    expect(pressureCard.firstChild).toHaveClass("border-orange-200");
-  });
+
+   expect(screen.getByText('Temperature')).toBeInTheDocument();
+   expect(screen.getByText('38.5')).toBeInTheDocument();
+   expect(screen.getByText('°C')).toBeInTheDocument();
+   expect(screen.getByText('High temperature warning')).toBeInTheDocument();
+
+
+   expect(screen.getByTestId('icon-alerttriangle')).toBeInTheDocument();
+
+
+    expect(screen.getByTestId('icon-thermometer')).toBeInTheDocument();
+ });
+
+
+ it('renders pressure card with critical status and alert circle icon', () => {
+   render(
+     <MetricCard
+       title="Pressure"
+       value="16.7"
+       unit="kPa"
+       description="Critical pressure level"
+       variant="pressure"
+       status="critical"
+     />
+   );
+
+
+   expect(screen.getByText('Pressure')).toBeInTheDocument();
+   expect(screen.getByText('16.7')).toBeInTheDocument();
+   expect(screen.getByText('kPa')).toBeInTheDocument();
+   expect(screen.getByText('Critical pressure level')).toBeInTheDocument();
+
+
+   expect(screen.getByTestId('icon-alertcircle')).toBeInTheDocument();
+
+
+   expect(screen.getByTestId('icon-gauge')).toBeInTheDocument();
+ });
+
+
+ it('defaults to normal status if status prop not provided', () => {
+   render(
+     <MetricCard
+       title="Methane"
+       value="2.0"
+       unit="ppm"
+       description="Methane level normal"
+       variant="methane"
+     />
+   );
+
+
+   expect(screen.getByText('Methane')).toBeInTheDocument();
+   expect(screen.getByText('2.0')).toBeInTheDocument();
+   expect(screen.getByText('ppm')).toBeInTheDocument();
+   expect(screen.getByText('Methane level normal')).toBeInTheDocument();
+
+
+   expect(screen.queryByTestId('icon-alerttriangle')).toBeNull();
+   expect(screen.queryByTestId('icon-alertcircle')).toBeNull();
+
+
+   expect(screen.getByTestId('icon-activity')).toBeInTheDocument();
+ });
 });
+
+
+
+
+
+

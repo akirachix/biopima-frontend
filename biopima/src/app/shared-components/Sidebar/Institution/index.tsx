@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { MdDashboard, MdSettings, MdAssessment } from "react-icons/md"; 
+import { MdDashboard, MdSettings, MdAssessment, MdWarning } from "react-icons/md"; 
 import Image from "next/image";
 
 export default function Sidebar() {
@@ -10,8 +10,8 @@ export default function Sidebar() {
   const items = [
     { path: "/dashboard", tag: "Dashboard", Icon: MdDashboard },
     { path: "/institution-report", tag: "Report", Icon: MdAssessment },
+    { path: "/alerts", tag: "Alerts", Icon: MdWarning },
     { path: "/institution-profile", tag: "Settings", Icon: MdSettings },
-    
   ];
 
   return (

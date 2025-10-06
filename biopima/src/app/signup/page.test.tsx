@@ -155,7 +155,7 @@ describe("SignupForm", () => {
         password: "amanda@job",
         confirmPassword: "amanda@job",
       });
-      expect(mockPush).toHaveBeenCalledWith("/institution"); 
+      expect(mockPush).toHaveBeenCalledWith("/login"); 
     });
   });
 

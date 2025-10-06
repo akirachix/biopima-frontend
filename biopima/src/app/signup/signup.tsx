@@ -70,9 +70,8 @@ export default function SignupForm({
     e.preventDefault();
     try {
       await handleSignup(form);
-      router.push("/institution");
+      router.push("/login");
     } catch {
-      
     }
   };
 
@@ -216,12 +215,13 @@ export default function SignupForm({
             </div>
 
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-green-900 text-white rounded-2xl mt-5 p-3 text-2xl cursor-pointer"
-            >
-              {loading ? "Signing up..." : "Sign Up"}
-            </button>
+               type="submit"
+               disabled={loading || !!formError}
+               className="w-full bg-green-900 text-white rounded-xl mt-5 p-3 text-xl cursor-pointer  disabled:cursor-not-allowed"
+             >
+               {loading ? "Signing up..." : "Sign Up"}
+             </button>
+
           </form>
 
           <p className="text-center text-1xl text-green-800 mt-3">
@@ -234,7 +234,7 @@ export default function SignupForm({
             </button>
           </p>
           {formError && (
-            <p className="text-red-600 mt-4 text-center">{formError}</p>
+            <p className="text-red-600 mt-[-120] mr-110 w-85 text-center">{formError}</p>
           )}
         </div>
       </div>

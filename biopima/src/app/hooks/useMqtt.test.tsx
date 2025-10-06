@@ -3,6 +3,7 @@
 
 
 import { renderHook } from '@testing-library/react';
+import type { Mock } from 'jest-mock';
 import useLiveSensorReadings from './useFetchSensorReadings';
 import { useMqtt } from './useMqtt';
 
@@ -25,7 +26,7 @@ describe('useLiveSensorReadings', () => {
 
 
  it('returns initial state correctly', () => {
-   (useMqtt as jest.Mock).mockReturnValue({
+   (useMqtt as Mock).mockReturnValue({
      latestReading: null,
      mqttError: null,
      isConnected: false,
@@ -41,7 +42,7 @@ describe('useLiveSensorReadings', () => {
 
 
  it('updates sensor readings and clears error on new latestReading', () => {
-   (useMqtt as jest.Mock).mockReturnValue({
+   (useMqtt as Mock).mockReturnValue({
      latestReading: mockLatestReading,
      mqttError: null,
      isConnected: true,
@@ -63,7 +64,7 @@ describe('useLiveSensorReadings', () => {
      methane_level: '1.8',
      created_at: new Date(Date.now() + 1000).toISOString(),
    };
-   (useMqtt as jest.Mock).mockReturnValue({
+   (useMqtt as Mock).mockReturnValue({
      latestReading: newReading,
      mqttError: null,
      isConnected: true,
@@ -85,7 +86,7 @@ describe('useLiveSensorReadings', () => {
    const { result, rerender } = renderHook(() => useLiveSensorReadings());
 
 
-   (useMqtt as jest.Mock).mockReturnValue({
+   (useMqtt as Mock).mockReturnValue({
      latestReading: null,
      mqttError: errorMessage,
      isConnected: false,
@@ -94,7 +95,7 @@ describe('useLiveSensorReadings', () => {
    expect(result.current.error).toBe(errorMessage);
 
 
-   (useMqtt as jest.Mock).mockReturnValue({
+   (useMqtt as Mock).mockReturnValue({
      latestReading: null,
      mqttError: null,
      isConnected: false,
@@ -115,7 +116,7 @@ describe('useLiveSensorReadings', () => {
 
 
    let index = 0;
-   (useMqtt as jest.Mock).mockImplementation(() => ({
+   (useMqtt as Mock).mockImplementation(() => ({
      latestReading: readings[index],
      mqttError: null,
      isConnected: true,
@@ -126,7 +127,7 @@ describe('useLiveSensorReadings', () => {
 
 
    for (index = 1; index < readings.length; index++) {
-     (useMqtt as jest.Mock).mockReturnValue({
+     (useMqtt as Mock).mockReturnValue({
        latestReading: readings[index],
        mqttError: null,
        isConnected: true,
