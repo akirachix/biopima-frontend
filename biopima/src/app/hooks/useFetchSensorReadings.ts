@@ -1,24 +1,50 @@
-import { fetchSensor } from "../utils/fetchSensorReadings";
+
 import { useEffect, useState } from "react";
 import { SensorReading } from "../utils/types/sensor";
+import { useMqtt } from "./useMqtt";
 
-const useFetchSensorReadings = () =>{
-    const [sensorReadings, setSensorReadings] = useState<Array<SensorReading>>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null)
-    useEffect(() =>{
-        (async() =>{
-            try{
-                const sensorReadings = await fetchSensor();
-                setSensorReadings(sensorReadings);
-            }catch(error){
-                setError((error as Error).message);
-            }finally{
-                setLoading(false);
-            }
-        })()
-    },[]);
-    return {sensorReadings, loading, error}
+
+const MAX_HISTORY = 50;
+
+
+const useLiveSensorReadings = () => {
+ const [sensorReadings, setSensorReadings] = useState<SensorReading[]>([]);
+ const [error, setError] = useState<string | null>(null);
+
+
+ const { latestReading, mqttError, isConnected } = useMqtt();
+
+ useEffect(() => {
+   if (mqttError) {
+     setError(mqttError);
+   } else {
+     setError(null);
+   }
+ }, [mqttError]);
+
+
+ useEffect(() => {
+   if (latestReading) {
+     setSensorReadings((prev) => [latestReading, ...prev.slice(0, MAX_HISTORY - 1)]);
+     setError(null);
+   }
+ }, [latestReading]);
+
+
+  const latest = sensorReadings.length > 0 ? sensorReadings[0] : null;
+
+
+ return {
+   sensorReadings,   
+   latestReading: latest,
+   isConnected,
+   error,
+ };
 };
 
-export default useFetchSensorReadings; 
+
+export default useLiveSensorReadings;
+
+
+
+

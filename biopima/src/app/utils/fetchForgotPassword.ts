@@ -1,4 +1,3 @@
-
 const baseUrl = "api/forgot-password";
 
 async function forgotPasswordApi(email: string) {

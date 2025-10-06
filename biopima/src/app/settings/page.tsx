@@ -97,8 +97,8 @@ export default function AddUser() {
         <div className="flex-1 p-6">
           <div className="mb-8">
             <h1 className="text-4xl font-semibold text-green-900">Add User</h1>
-            <p className="text-sm  text-black">
-              Manage your plant details, alert threshold and user access
+            <p className="text-lg  text-black">
+              Manage your client details and user access
             </p>
           </div>
 
@@ -115,10 +115,10 @@ export default function AddUser() {
             )}
 
             <h2 className="text-white text-2xl font-semibold mb-2">
-              Plant Information
+              Client Information
             </h2>
             <p className="text-gray-200 text-lg mb-8">
-              Upload your plant details
+              Upload your client details
             </p>
 
             <form

@@ -1,121 +1,137 @@
+
+
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import DashboardPage from './page';
 
+
+
+
+jest.mock('recharts', () => {
+ const OriginalRecharts = jest.requireActual('recharts');
+ return {
+   ...OriginalRecharts,
+   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
+     <div data-testid="mocked-responsive-container">{children}</div>
+   ),
+ };
+});
+
+
+
+
 jest.mock('../hooks/useFetchSensorReadings', () => ({
-  __esModule: true,
-  default: jest.fn(),
+ __esModule: true,
+ default: jest.fn(),
 }));
 
-jest.mock('./components/Header', () => {
-  const Header = () => <div>Header</div>;
-  Header.displayName = 'Header';
-  return Header;
-});
 
-jest.mock('./components/MetricCard', () => {
-  interface MetricCardProps {
-    title?: string;
-  }
-  const MetricCard = (props: MetricCardProps) => <div data-testid="MetricCard">{props.title}</div>;
-  MetricCard.displayName = 'MetricCard';
-  return MetricCard;
-});
+import useLiveSensorReadings from '../hooks/useFetchSensorReadings';
 
-jest.mock('./components/StatusCard', () => {
-  interface StatusCardProps {
-    type?: 'system' | 'monitoring';
-  }
-  const StatusCard = (props: StatusCardProps) => <div data-testid="StatusCard">{props.type}</div>;
-  StatusCard.displayName = 'StatusCard';
-  return StatusCard;
-});
-
-jest.mock('./components/ChartSection', () => {
-  const ChartSection = () => <div data-testid="ChartSection" />;
-  ChartSection.displayName = 'ChartSection';
-  return ChartSection;
-});
-
-jest.mock('./components/ActivityFeed', () => {
-  const ActivityFeed = () => <div>ActivityFeed</div>;
-  ActivityFeed.displayName = 'ActivityFeed';
-  return ActivityFeed;
-});
-
-jest.mock('./components/AlertBox', () => {
-  interface AlertBoxProps {
-    methaneLevel?: number | null;
-  }
-  const AlertBox = (props: AlertBoxProps) => (
-    <div data-testid="AlertBox" data-methanelevel={props.methaneLevel !== undefined ? String(props.methaneLevel) : 'null'} />
-  );
-  AlertBox.displayName = 'AlertBox';
-  return AlertBox;
-});
-
-import useFetchSensorReadings from '../hooks/useFetchSensorReadings';
 
 describe('DashboardPage', () => {
-  it('renders loading state', () => {
-    (useFetchSensorReadings as jest.Mock).mockReturnValue({
-      sensorReadings: [],
-      loading: true,
-      error: null,
-    });
+ beforeEach(() => {
+   jest.clearAllMocks();
+ });
 
-    render(<DashboardPage />);
 
-    expect(screen.getByText(/Loading/i)).toBeInTheDocument();
-  });
+ it('renders loading state when connecting', () => {
+   (useLiveSensorReadings as jest.Mock).mockReturnValue({
+     sensorReadings: [],
+     latestReading: null,
+     isConnected: false,
+     error: null,
+     isLoading: false,
+   });
+   render(<DashboardPage />);
+   expect(screen.getByText(/Connecting/i)).toBeInTheDocument();
+   expect(screen.getAllByText(/No data/i).length).toBeGreaterThan(0);
+ });
 
-  it('renders error state', () => {
-    (useFetchSensorReadings as jest.Mock).mockReturnValue({
-      sensorReadings: [],
-      loading: false,
-      error: 'Failed to load',
-    });
 
-    render(<DashboardPage />);
+ it('renders live connection status when connected', () => {
+   (useLiveSensorReadings as jest.Mock).mockReturnValue({
+     sensorReadings: [],
+     latestReading: null,
+     isConnected: true,
+     error: null,
+     isLoading: false,
+   });
+   render(<DashboardPage />);
+   expect(screen.getByText(/Live connection/i)).toBeInTheDocument();
+ });
 
-    expect(screen.getByText(/Oops! Something went wrong loading the data./i)).toBeInTheDocument();
-  });
 
-  it('renders dashboard with data', () => {
-    const mockReadings = [
-      {
-        created_at: new Date().toISOString(),
-        methane_level: '300',
-        temperature_level: '28',
-        pressure_level: '1.5',
-      },
-      {
-        created_at: new Date(Date.now() - 3600 * 1000).toISOString(),
-        methane_level: '310',
-        temperature_level: '27',
-        pressure_level: '1.4',
-      },
-    ];
+ it('renders error message when error exists', () => {
+   (useLiveSensorReadings as jest.Mock).mockReturnValue({
+     sensorReadings: [],
+     latestReading: null,
+     isConnected: false,
+     error: 'Some error occurred',
+     isLoading: false,
+   });
+   render(<DashboardPage />);
+   expect(screen.getByText('Some error occurred')).toBeInTheDocument();
+ });
 
-    (useFetchSensorReadings as jest.Mock).mockReturnValue({
-      sensorReadings: mockReadings,
-      loading: false,
-      error: null,
-    });
 
-    render(<DashboardPage />);
+ it('displays metric cards with latest readings and correct status', () => {
+   const latestReading = {
+     temperature_level: '36.5',
+     pressure_level: '12.5',
+     methane_level: '1.0',
+     created_at: new Date().toISOString(),
+   };
+   (useLiveSensorReadings as jest.Mock).mockReturnValue({
+     sensorReadings: [latestReading],
+     latestReading,
+     isConnected: true,
+     error: null,
+     isLoading: false,
+   });
+   render(<DashboardPage />);
 
-    expect(screen.getByText('Header')).toBeInTheDocument();
 
-    expect(screen.getAllByTestId('MetricCard')).toHaveLength(3);
-    expect(screen.getByText('Methane')).toBeInTheDocument();
-    expect(screen.getByText('Temperature')).toBeInTheDocument();
-    expect(screen.getByText('Pressure')).toBeInTheDocument();
+ 
+   expect(screen.getByText('36.5')).toBeInTheDocument();
+   expect(screen.getByText('°C')).toBeInTheDocument();
+   expect(screen.getByText('12.5')).toBeInTheDocument();
+   expect(screen.getByText('kPa')).toBeInTheDocument();
+   expect(screen.getByText('1.00')).toBeInTheDocument();
+   expect(screen.getByText('ppm')).toBeInTheDocument();
 
-    expect(screen.getAllByTestId('StatusCard')).toHaveLength(2);
-    expect(screen.getByTestId('ChartSection')).toBeInTheDocument();
-    expect(screen.getByText('ActivityFeed')).toBeInTheDocument();
 
-    expect(screen.getByTestId('AlertBox').getAttribute('data-methanelevel')).toBe('300');
-  });
+ 
+   const metricTitles = screen.getAllByRole('heading', { level: 3 });
+   const titlesText = metricTitles.map((el) => el.textContent);
+   expect(titlesText).toEqual(
+     expect.arrayContaining(['Methane', 'Temperature', 'Pressure'])
+   );
+ });
+
+
+ it('displays critical status for high methane levels', () => {
+   const latestReading = {
+     temperature_level: '36.5',
+     pressure_level: '12',
+     methane_level: '3.0',
+     created_at: new Date().toISOString(),
+   };
+   (useLiveSensorReadings as jest.Mock).mockReturnValue({
+     sensorReadings: [latestReading],
+     latestReading,
+     isConnected: true,
+     error: null,
+     isLoading: false,
+   });
+   render(<DashboardPage />);
+
+
+   expect(screen.getByText('3.00')).toBeInTheDocument();
+   expect(screen.getByText(/Bubbles in the tank!/i)).toBeInTheDocument();
+ });
 });
+
+
+
+

@@ -9,7 +9,7 @@ export default function RolePage() {
     if (role === "institution") {
       router.push("/login?role=institution"); 
     } else {
-      router.push("/signup"); 
+      router.push("/login"); 
     }
   };
 

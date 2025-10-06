@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     });
   }
   try {
-    const response = await fetch(`${baseUrl}/forgot-password/`, {
+    const response = await fetch(`${baseUrl}/api/forgot-password/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
