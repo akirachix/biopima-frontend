@@ -25,10 +25,10 @@ export default function SignInForm() {
         localStorage.setItem("userId", userId);
         localStorage.setItem("token", result.token);
         localStorage.setItem("email", email);
-        localStorage.setItem("role", role || "");
+        localStorage.setItem("role", result.user_type);
       }
 
-      if (role?.toLowerCase() === "institutional operator") {
+      if (result.user_type.toLowerCase() === "institutional operator") {
         router.push("/dashboard");
       } else {
         router.push("/institution");

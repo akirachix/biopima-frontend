@@ -4,6 +4,8 @@ import * as fetchLoginModule from "../utils/fetchLogin";
 
 interface FakeUser {
   user_type: string;
+  token?: string;
+  user_id?: number;
 }
 
 describe("useLogin hook", () => {
@@ -45,7 +47,11 @@ describe("useLogin hook", () => {
   });
 
   it("returns result when login succeeds", async () => {
-    const fakeUser: FakeUser = { user_type: "admin" };
+    const fakeUser: FakeUser = {
+      user_type: "admin",
+      token: "token123",
+      user_id: 1,
+    };
     mockLoginUser.mockResolvedValue(fakeUser);
 
     const { result } = renderHook(() => useLogin());
@@ -90,7 +96,7 @@ describe("useLogin hook", () => {
     });
 
     expect(response).toBeNull();
-    expect(result.current.error).toBe("Cannot read properties of undefined (reading 'role')");
+    expect(result.current.error).toBe("This account does not have access to this role."); // fixed message
     expect(result.current.loading).toBe(false);
   });
 });
