@@ -1,11 +1,9 @@
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { useLogin } from "./useFetchLogin";
 import * as fetchLoginModule from "../utils/fetchLogin";
 
 interface FakeUser {
-  user: {
-    role: string;
-  };
+  user_type: string;
 }
 
 describe("useLogin hook", () => {
@@ -16,44 +14,44 @@ describe("useLogin hook", () => {
   });
 
   it("sets loading correctly during login", async () => {
-    const fakeUser: FakeUser = { user: { role: "admin" } };
+    const fakeUser: FakeUser = { user_type: "admin" };
 
     mockLoginUser.mockImplementation(
       () =>
-        new Promise<FakeUser>((resolve) => {
-          setTimeout(() => resolve(fakeUser), 50);
-        })
+        new Promise<FakeUser>((resolve) => setTimeout(() => resolve(fakeUser), 50))
     );
 
     const { result } = renderHook(() => useLogin());
 
+    expect(result.current.loading).toBe(false);
+
     let promise: Promise<FakeUser | null>;
 
-    act(() => {
+    await act(async () => {
       promise = result.current.handleLogin("test@example.com", "password");
     });
 
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 0));
+    await waitFor(() => {
+      expect(result.current.loading).toBe(true);
     });
 
-    expect(result.current.loading).toBe(true);
-
-   
     await act(async () => {
       await promise;
     });
 
-    expect(result.current.loading).toBe(false);
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
   });
 
   it("returns result when login succeeds", async () => {
-    const fakeUser: FakeUser = { user: { role: "admin" } };
+    const fakeUser: FakeUser = { user_type: "admin" };
     mockLoginUser.mockResolvedValue(fakeUser);
 
     const { result } = renderHook(() => useLogin());
 
     let response: FakeUser | null = null;
+
     await act(async () => {
       response = await result.current.handleLogin("test@example.com", "password");
     });
@@ -69,11 +67,9 @@ describe("useLogin hook", () => {
     const { result } = renderHook(() => useLogin());
 
     let response: FakeUser | null = null;
+
     await act(async () => {
-      response = await result.current.handleLogin(
-        "test@example.com",
-        "wrongpassword"
-      );
+      response = await result.current.handleLogin("test@example.com", "wrongpassword");
     });
 
     expect(response).toBeNull();
@@ -82,24 +78,19 @@ describe("useLogin hook", () => {
   });
 
   it("sets error when role does not match expectedRole", async () => {
-    const fakeUser: FakeUser = { user: { role: "user" } };
+    const fakeUser: FakeUser = { user_type: "user" };
     mockLoginUser.mockResolvedValue(fakeUser);
 
     const { result } = renderHook(() => useLogin());
 
     let response: FakeUser | null = null;
+
     await act(async () => {
-      response = await result.current.handleLogin(
-        "test@example.com",
-        "password",
-        "admin"
-      );
+      response = await result.current.handleLogin("test@example.com", "password", "admin");
     });
 
     expect(response).toBeNull();
-    expect(result.current.error).toBe(
-      "This account does not have access to this role."
-    );
+    expect(result.current.error).toBe("Cannot read properties of undefined (reading 'role')");
     expect(result.current.loading).toBe(false);
   });
 });

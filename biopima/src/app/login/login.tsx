@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FiEye, FiEyeOff } from "react-icons/fi";
@@ -21,17 +21,14 @@ export default function SignInForm() {
 
     if (result) {
       if (typeof window !== "undefined") {
-        const userId = String(result.user_id || result.id); 
-        console.log("DEBUG Login result:", result);
-        console.log("DEBUG Stored userId:", userId);
-
+        const userId = String(result.user_id || result.id);
         localStorage.setItem("userId", userId);
         localStorage.setItem("token", result.token);
         localStorage.setItem("email", email);
         localStorage.setItem("role", role || "");
       }
 
-      if (role && role.toLowerCase() === "institution") {
+      if (role?.toLowerCase() === "institutional operator") {
         router.push("/dashboard");
       } else {
         router.push("/institution");
@@ -102,9 +99,9 @@ export default function SignInForm() {
         {loading ? "Signing in..." : "Sign In"}
       </button>
 
-      {role?.toLowerCase() !== "institution" && (
+      {role?.toLowerCase() !== "institutional operator" && (
         <p className="text-center text-1xl text-green-800 mt-8">
-           Don&apos;t have an account?{" "}
+          Don&apos;t have an account?{" "}
           <button
             onClick={() => router.push("/signup")}
             className="text-green-900 font-bold hover:underline cursor-pointer"
