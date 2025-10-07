@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Bell, User } from 'lucide-react';
 
@@ -6,7 +6,9 @@ export default function Header() {
   return (
     <div className="bg-white shadow-sm p-3 sm:p-4 md:p-6 rounded-lg mb-4 sm:mb-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-green-900">Dashboard</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-green-900">
+          Dashboard
+        </h1>
         <div className="flex items-center space-x-3 sm:space-x-4">
           <div className="relative">
             <Bell className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-600" />
