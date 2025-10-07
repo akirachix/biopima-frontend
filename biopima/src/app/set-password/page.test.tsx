@@ -82,7 +82,7 @@ describe('SetPasswordPage', () => {
     expect(screen.getByText(/Password Set Successful!/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /Go to Login/i }));
-    expect(pushMock).toHaveBeenCalledWith('/login?role=institution'); 
+    expect(pushMock).toHaveBeenCalledWith('/login?role=Institutional%20operator'); 
   });
 
   test('show and hide password toggles input type', async () => {

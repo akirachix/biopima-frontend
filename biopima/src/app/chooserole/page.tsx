@@ -6,11 +6,8 @@ export default function RolePage() {
   const router = useRouter();
 
   const handleSelect = (role: string) => {
-    if (role === "institution") {
-      router.push("/login?role=institution"); 
-    } else {
-      router.push("/login"); 
-    }
+
+    router.push(`/login?role=${encodeURIComponent(role)}`);
   };
 
   return (
@@ -31,20 +28,21 @@ export default function RolePage() {
       </h2>
 
       <p className="text-xl md:text-2xl text-gray-700 leading-relaxed text-center mb-12 px-4">
-        The intelligent platform for monitoring and managing your bio-digester plants.<br />
+        The intelligent platform for monitoring and managing your bio-digester plants.
+        <br />
         Please select your role to continue.
       </p>
 
       <div className="flex flex-row sm:flex-row gap-6">
         <button
-          onClick={() => handleSelect("institution")}
+          onClick={() => handleSelect("Institutional operator")}
           className="border-2 border-[#9EAF1B] bg-transparent text-[#9EAF1B] text-xl md:text-2xl font-bold py-3 px-8 rounded-2xl hover:bg-[#9EAF1B] hover:text-white transition-all duration-200 shadow-md hover:shadow-lg min-w-[140px] cursor-pointer"
         >
           Institution
         </button>
 
         <button
-          onClick={() => handleSelect("consultant")}
+          onClick={() => handleSelect("Consultant")}
           className="border-2 border-[#9EAF1B] bg-transparent text-[#9EAF1B] text-xl md:text-2xl font-bold py-3 px-8 rounded-2xl hover:bg-[#9EAF1B] hover:text-white transition-all duration-200 shadow-md hover:shadow-lg min-w-[140px] cursor-pointer"
         >
           Consultant

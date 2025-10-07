@@ -94,7 +94,7 @@ function SetPasswordPage() {
         
            <button
              className="w-full max-w-xs py-3 bg-[#9EAF1B] text-white font-medium text-lg rounded-lg transition-colors duration-200 hover:bg-green-700 cursor-pointer"
-             onClick={() => router.push("/login?role=institution")}
+             onClick={() => router.push("/login?role=Institutional%20operator")}
            >
              Go to Login
            </button>
